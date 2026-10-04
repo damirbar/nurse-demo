@@ -1,4 +1,3 @@
-<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#faf9f5;color:#141413}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
 <title>אחות בדרך</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -255,19 +254,36 @@ textarea{width:100%;min-height:64px;resize:vertical;border:1.5px solid var(--lin
 #toast.show{opacity:1;transform:translate(-50%,0)}
 .demo-note{font-size:11px;color:var(--muted);text-align:center}
 @media (prefers-reduced-motion:reduce){*,*::before,*::after{animation:none!important;transition:none!important}}
+/* v2 additions */
+.nm.anon{width:14px;height:14px;background:var(--muted);border:2px solid #fff;opacity:.75;box-shadow:0 1px 4px rgba(0,0,0,.25)}
+.nm.anon.dim{opacity:.3}
+.calm{display:flex;gap:10px;align-items:flex-start;background:var(--brand-soft);color:var(--ink);border-radius:14px;padding:11px 13px;font-size:13px;line-height:1.5}
+.calm svg{flex:none;margin-top:2px;color:var(--brand)}
+.helprow{display:flex;justify-content:space-between;align-items:center;width:100%;border:1.5px solid var(--line);background:var(--surface);border-radius:14px;padding:12px 14px;cursor:pointer;font-size:14px;color:var(--ink)}
+.helprow b{color:var(--brand);font-weight:600}
+.sos{font-size:12px;color:var(--muted);text-align:center}
+.sos b{color:var(--danger)}
+.tickrow{display:flex;gap:10px;align-items:flex-start;width:100%;text-align:start;border:1.5px solid var(--line);background:var(--surface);border-radius:14px;padding:11px 13px;cursor:pointer;font-size:13.5px;line-height:1.45;color:var(--ink)}
+.tickrow .box{flex:none;width:20px;height:20px;border-radius:6px;border:2px solid var(--line);display:grid;place-items:center;color:transparent;margin-top:1px}
+.tickrow[aria-pressed="true"]{border-color:var(--ok);background:var(--ok-soft)}
+.tickrow[aria-pressed="true"] .box{background:var(--ok);border-color:var(--ok);color:#fff}
+.field{width:100%;border:1.5px solid var(--line);background:var(--surface);color:var(--ink);border-radius:12px;padding:10px 12px;font:inherit;font-size:15px;direction:ltr;text-align:right}
+.field:focus{outline:2px solid var(--brand);outline-offset:1px}
+.otp{display:flex;gap:10px;justify-content:center;direction:ltr}
+.otp span{width:46px;height:54px;border-radius:12px;border:1.5px solid var(--line);background:var(--surface-2);display:grid;place-items:center;font-size:22px;font-weight:700}
+.calm-radar span:not(.core){display:none}
 </style>
-
 <div id="app" dir="rtl" lang="he">
   <div id="map" dir="ltr" aria-label="מפה"></div>
 
   <header class="topbar">
     <div class="brand">
       <div class="brand-mark"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg></div>
-      <div><b>אחות בדרך</b><small>אחות עד הבית, תוך דקות</small></div>
+      <div><b>אחות בדרך</b><small>אחות מוסמכת עד הבית, בחיפה</small></div>
     </div>
     <div class="seg" role="group" aria-label="מצב">
-      <button id="modeP" aria-pressed="true">מטופל/ת</button>
-      <button id="modeN" aria-pressed="false">אחות</button>
+      <button id="modeP" aria-pressed="true">מטופל/ת · אתר</button>
+      <button id="modeN" aria-pressed="false">אחות · אפליקציה</button>
     </div>
   </header>
 
@@ -290,13 +306,11 @@ textarea{width:100%;min-height:64px;resize:vertical;border:1.5px solid var(--lin
   <section class="sheet" id="sheet" aria-live="polite"></section>
   <div id="toast" role="status"></div>
 </div>
-
 <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.js"></script>
 <script>
 (() => {
-/* ================= geometry: a local "street grid" frame (u = along the coast, v = inland) ================= */
 const DEG = Math.PI / 180, SN = Math.sin(20 * DEG), CS = Math.cos(20 * DEG);
-const CENTER = [32.0795, 34.7810];               // Tel Aviv, around Ibn Gabirol
+const CENTER = [32.7940, 34.9896];               // Haifa, Hadar and the bay
 const MLAT = 111320, MLNG = 111320 * Math.cos(CENTER[0] * DEG);
 const BU = 160, BV = 110;                         // block size in metres
 const ll2xy = (lat, lng) => ({ x: (lng - CENTER[1]) * MLNG, y: (lat - CENTER[0]) * MLAT });
@@ -329,8 +343,8 @@ function at(path, d) {
   return { u: a.u + (b.u - a.u) * t, v: a.v + (b.v - a.v) * t, i };
 }
 
-const NS = ['הירקון', 'בן יהודה', 'דיזנגוף', 'המלך ג׳ורג׳', 'שינקין', 'אבן גבירול', 'לאונרדו דה וינצ׳י', 'ויצמן', 'נמיר', 'פנקס', 'בלוך', 'שלמה המלך'];
-const EW = ['פרישמן', 'גורדון', 'ארלוזורוב', 'נורדאו', 'בוגרשוב', 'אלנבי', 'מסדה', 'שלום עליכם', 'יהודה הלוי', 'רוטשילד', 'ביאליק', 'בלפור', 'ז׳בוטינסקי', 'קרליבך'];
+const NS = ['דרך העצמאות', 'שדרות בן גוריון', 'הרצל', 'החלוץ', 'מסדה', 'הנביאים', 'שדרות הנשיא', 'מוריה', 'חורב', 'אבא חושי', 'יפה נוף', 'הגפן'];
+const EW = ['בלפור', 'ארלוזורוב', 'יל״ג', 'פרויד', 'שבתאי לוי', 'הפרסים', 'עבאס', 'אלנבי', 'ביאליק', 'סטנטון', 'חטיבת כרמלי', 'הגליל', 'טשרניחובסקי', 'קיבוץ גלויות'];
 const mod = (a, n) => ((a % n) + n) % n;
 const nsName = v => NS[mod(Math.round(v / BV) + 3, NS.length)];
 const ewName = u => EW[mod(Math.round(u / BU) + 5, EW.length)];
@@ -342,57 +356,59 @@ const IC = {
   bandage: '<rect x="2.5" y="8.5" width="19" height="7" rx="3.5" transform="rotate(-45 12 12)"/><path d="M10.6 10.6h.01M13.4 13.4h.01M10.6 13.4h.01M13.4 10.6h.01"/>',
   syringe: '<path d="m18 2 4 4M17 7l3-3M19 9 9 19H5v-4L15 5zM9 11l2 2M12 8l2 2"/>',
   iv: '<path d="M7 3h10v8a5 5 0 0 1-10 0zM12 16v5M7 7h5M7 10h3"/>',
-  scissors: '<circle cx="6" cy="6" r="3"/><circle cx="6" cy="18" r="3"/><path d="M20 4 8.1 15.9M14.5 14.5 20 20M8.1 8.1 12 12"/>',
-  pulse: '<path d="M3 12h4l2-5 4 10 2-5h6"/>',
+  tube: '<path d="M6 3c0 6 12 6 12 12a4 4 0 0 1-8 0v-2"/><circle cx="10" cy="11" r="1.5"/>',
   cath: '<path d="M6 3v6a6 6 0 0 0 12 0V3M12 15v3a3 3 0 0 0 3 3h3"/>',
   bed: '<path d="M3 19V6M3 14h18v5M21 14a3 3 0 0 0-3-3h-7v3"/><circle cx="7" cy="11" r="1.6"/>',
   check: '<path d="m5 12 5 5 9-10"/>',
   star: '<path d="m12 3 2.7 5.6 6.1.8-4.5 4.2 1.1 6.1L12 16.8 6.6 19.7l1.1-6.1L3.2 9.4l6.1-.8z" fill="currentColor" stroke="none"/>',
-  chat: '<path d="M4 5h16v11H9l-5 4z"/>',
   phone: '<path d="M5 3h4l2 5-3 2a11 11 0 0 0 6 6l2-3 5 2v4a2 2 0 0 1-2 2A17 17 0 0 1 3 5a2 2 0 0 1 2-2z"/>',
   back: '<path d="m9 6 6 6-6 6"/>',
-  send: '<path d="M20 4 3 11l7 2 2 7z"/>',
   shield: '<path d="M12 3 5 6v6c0 4 3 7.5 7 9 4-1.5 7-5 7-9V6z"/><path d="m9 12 2 2 4-4"/>',
   clock: '<circle cx="12" cy="12" r="8.5"/><path d="M12 7.5V12l3 2"/>',
   right: '<path d="M5 18v-6a4 4 0 0 1 4-4h10M15 4l4 4-4 4"/>',
   left: '<path d="M19 18v-6a4 4 0 0 0-4-4H5M9 4 5 8l4 4"/>',
-  up: '<path d="M12 20V5M6 11l6-6 6 6"/>',
   flag: '<path d="M5 21V4h11l-2 4 2 4H5"/>',
   cross: '<path d="M12 5v14M5 12h14"/>',
   pin: '<path d="M12 21s-7-6.2-7-11.5A7 7 0 0 1 19 9.5C19 14.8 12 21 12 21z"/><circle cx="12" cy="9.5" r="2.5"/>',
+  box: '<path d="M4 8l8-4 8 4v8l-8 4-8-4z"/><path d="M4 8l8 4 8-4M12 12v8"/>',
+  family: '<circle cx="8" cy="8" r="3"/><circle cx="17" cy="9" r="2.5"/><path d="M3 20a5 5 0 0 1 10 0M13.5 20a3.5 3.5 0 0 1 7 0"/>',
+  lock: '<rect x="5" y="11" width="14" height="9" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/>',
 };
 const ico = (n, s = 20, w = 2) => `<svg width="${s}" height="${s}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="${w}" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${IC[n]}</svg>`;
 
+// The seven first-version services. Prices are examples, all-inclusive (VAT and disposable supplies).
+// No clinical questionnaire: only the type, and whether a doctor's referral is required.
 const SERVICES = [
-  { id: 'blood', c: '#E5484D', name: 'בדיקת דם בבית', short: 'בדיקת דם', price: 180, mins: 15, icon: 'drop', desc: 'דגימה לפי הפניה מהרופא, כולל שינוע למעבדת הקופה.', incl: ['עד 6 מבחנות', 'שינוע בקירור למעבדה', 'תוצאות באפליקציית הקופה תוך 24–48 שעות'], steps: ['אימות זהות והפניה', 'חיטוי והנחת חוסם ורידי', 'דגימה – 4 מבחנות', 'תיוג, קירור ושליחה למעבדה'] },
-  { id: 'wound', c: '#F2811D', name: 'חבישה וטיפול בפצע', short: 'חבישה', price: 160, mins: 25, icon: 'bandage', desc: 'ניקוי, הערכת פצע והחלפת חבישה. כולל פצעי לחץ ופצעי ניתוח.', incl: ['חומרי חבישה סטריליים', 'תיעוד מצב הפצע בתמונה', 'המלצה להמשך טיפול'], steps: ['הסרת החבישה הישנה', 'שטיפה וחיטוי', 'הערכת הפצע ותיעוד', 'חבישה חדשה וקיבוע'] },
-  { id: 'inj', c: '#8E4EC6', name: 'זריקה', short: 'זריקה', price: 120, mins: 10, icon: 'syringe', desc: 'תת-עורית או תוך-שרירית: קלקסן, B12, חיסונים. לפי מרשם.', incl: ['מזרק ומחט חד-פעמיים', 'פינוי פסולת רפואית', 'השגחה 5 דקות אחרי'], steps: ['בדיקת מרשם ותרופה', 'חיטוי אזור ההזרקה', 'מתן הזריקה', 'השגחה 5 דקות'] },
-  { id: 'iv', c: '#0EA5E9', name: 'עירוי לווריד', short: 'עירוי IV', price: 350, mins: 60, icon: 'iv', desc: 'נוזלים או אנטיביוטיקה לפי הוראת רופא, כולל הנחת ונפלון.', incl: ['ונפלון וסט עירוי', 'ניטור לאורך העירוי', 'דיווח לרופא המטפל'], steps: ['בדיקת הוראת רופא', 'הנחת ונפלון', 'חיבור עירוי וכיוון קצב', 'ניטור והוצאת ונפלון'] },
-  { id: 'stitch', c: '#D6409F', name: 'הוצאת תפרים או סיכות', short: 'הוצאת תפרים', price: 150, mins: 15, icon: 'scissors', desc: 'לפי הנחיית המנתח, בדרך כלל 7–14 ימים אחרי ניתוח.', incl: ['ערכה סטרילית', 'סטריפים לפי הצורך'], steps: ['בדיקת הצלקת', 'חיטוי', 'הוצאת התפרים', 'סטריפים וחבישה'] },
-  { id: 'vitals', c: '#12A150', name: 'לחץ דם, סוכר וסטורציה', short: 'מדדים', price: 100, mins: 10, icon: 'pulse', desc: 'בדיקה שגרתית או מעקב אחרי שינוי בתרופות.', incl: ['לחץ דם, דופק וחום', 'סוכר בדם וסטורציה', 'דוח PDF לרופא המשפחה'], steps: ['לחץ דם ודופק', 'סטורציה וחום', 'בדיקת סוכר', 'שליחת דוח לרופא'] },
-  { id: 'cath', c: '#C27C0E', name: 'החלפת קטטר שתן', short: 'קטטר', price: 260, mins: 30, icon: 'cath', desc: 'החלפה סטרילית של קטטר קבוע, כולל שקית איסוף.', incl: ['קטטר ושקית איסוף', 'ערכה סטרילית'], steps: ['הכנת שדה סטרילי', 'הוצאת הקטטר הקיים', 'החדרת קטטר חדש', 'בדיקת ניקוז ותיעוד'] },
-  { id: 'postop', c: '#3E63DD', name: 'ליווי אחרי ניתוח', short: 'אחרי ניתוח', price: 220, mins: 60, icon: 'bed', desc: 'שעת השגחה בבית: כאב, נקזים, תרופות ומדדים.', incl: ['בדיקת נקזים וחבישות', 'הדרכת בני המשפחה', 'דיווח למחלקה המנתחת'], steps: ['מדדים והערכת כאב', 'בדיקת נקזים', 'סידור תרופות', 'הדרכת בני המשפחה'] },
+  { id: 'cath', c: '#B7791F', name: 'החלפת קטטר', short: 'קטטר', price: 440, mins: 30, icon: 'cath', rx: true, types: ['קטטר שתן', 'קטטר סופרה-פובי'] },
+  { id: 'zonda', c: '#2F855A', name: 'טיפול בזונדה', short: 'זונדה', price: 380, mins: 30, icon: 'tube', rx: true, types: ['החלפה', 'טיפול שוטף'] },
+  { id: 'iv', c: '#0E7FB8', name: 'עירוי נוזלים', short: 'עירוי', price: 440, mins: 60, icon: 'iv', rx: true, types: [] },
+  { id: 'inj', c: '#7A4CC2', name: 'זריקה', short: 'זריקה', price: 220, mins: 15, icon: 'syringe', rx: true, types: ['תת-עורית', 'לווריד'] },
+  { id: 'im', c: '#9B4DCA', name: 'זריקה לשריר', short: 'זריקה לשריר', price: 220, mins: 15, icon: 'syringe', rx: true, types: [] },
+  { id: 'sore', c: '#C05621', name: 'טיפול בפצע לחץ', short: 'פצע לחץ', price: 420, mins: 40, icon: 'bed', rx: false, types: [] },
+  { id: 'dress', c: '#D53F8C', name: 'חבישה', short: 'חבישה', price: 260, mins: 20, icon: 'bandage', rx: false, types: ['אחרי ניתוח', 'פצע', 'כוויה'] },
 ];
-const FUNDS = [['clalit', 'כללית'], ['maccabi', 'מכבי'], ['meuhedet', 'מאוחדת'], ['leumit', 'לאומית'], ['private', 'פרטי']];
-const WHEN = [['now', 'עכשיו', 'אחות תגיע תוך דקות'], ['today', 'היום', '18:00–20:00'], ['tomorrow', 'מחר', '08:00–10:00']];
+const WHEN = [['asap', 'בהקדם', 'עד 3 שעות'], ['eve', 'היום בערב', '18:00–20:00'], ['tmr', 'מחר בבוקר', '08:00–10:00']];
+const FOR = [['me', 'אני'], ['dad', 'אבא'], ['mom', 'אמא'], ['other', 'מישהו אחר']];
+const GENDER = [['any', 'לא משנה'], ['f', 'אחות'], ['m', 'אח']];
+const LANGS = ['עברית', 'ערבית', 'רוסית', 'אנגלית', 'אמהרית'];
 
+// name, female?, rating, visits, years, (unused), (unused), languages, visits per service type
 const NURSE_DATA = [
-  ['נועה לוי', 1, 4.97, 1284, 9, 'קטנוע', '82-114-51', 'עברית, אנגלית', 'פצעים וסטומה'],
-  ['מרים אבו-ריא', 1, 4.93, 862, 12, 'טויוטה יאריס לבנה', '45-872-33', 'עברית, ערבית', 'גריאטריה'],
-  ['דנה כהן', 1, 4.90, 411, 5, 'קטנוע', '71-203-19', 'עברית', 'ילדים'],
-  ['אולגה פטרוב', 1, 4.95, 1570, 17, 'קיה פיקנטו כסופה', '13-590-62', 'עברית, רוסית', 'עירויים'],
-  ['יוסי מזרחי', 0, 4.88, 340, 4, 'קטנוע', '59-730-44', 'עברית, אנגלית', 'טיפול נמרץ'],
-  ['שירן ביטון', 1, 4.96, 990, 8, 'קטנוע', '66-481-07', 'עברית, צרפתית', 'אונקולוגיה'],
-  ['סאמר ח׳טיב', 0, 4.91, 705, 10, 'יונדאי i20 אפורה', '38-126-84', 'עברית, ערבית, אנגלית', 'רפואה דחופה'],
-  ['טל אברהם', 1, 4.89, 233, 3, 'קטנוע', '90-357-26', 'עברית', 'יולדות ותינוקות'],
-  ['רונית שפירא', 1, 4.98, 2104, 22, 'מאזדה 2 כחולה', '27-664-10', 'עברית, אנגלית', 'סוכרת'],
-  ['אביגיל טסמה', 1, 4.94, 518, 6, 'קטנוע', '84-219-73', 'עברית, אמהרית', 'גריאטריה'],
-  ['מיכאל רוזן', 0, 4.87, 187, 2, 'סקודה פאביה לבנה', '52-908-36', 'עברית, אנגלית', 'אורתופדיה'],
+  ['נועה לוי', 1, 4.97, 1284, 9, '', '', 'עברית, אנגלית', { cath: 210, iv: 160, sore: 340 }],
+  ['מרים אבו-ריא', 1, 4.93, 862, 12, '', '', 'עברית, ערבית', { cath: 180, zonda: 95, iv: 140 }],
+  ['אולגה פטרוב', 1, 4.95, 1570, 17, '', '', 'עברית, רוסית', { iv: 420, inj: 300, im: 260 }],
+  ['סאמר ח׳טיב', 0, 4.91, 705, 10, '', '', 'עברית, ערבית, אנגלית', { cath: 260, zonda: 120, iv: 90 }],
+  ['רונית שפירא', 1, 4.98, 2104, 22, '', '', 'עברית, אנגלית', { sore: 510, dress: 640 }],
+  ['אביגיל טסמה', 1, 4.94, 518, 6, '', '', 'עברית, אמהרית', { inj: 150, im: 140, dress: 120 }],
+  ['רנא חדאד', 1, 4.96, 990, 8, '', '', 'עברית, ערבית, אנגלית', { iv: 230, inj: 210, sore: 150 }],
+  ['יוסי מזרחי', 0, 4.88, 340, 4, '', '', 'עברית', { dress: 160, im: 90 }],
+  ['סבטלנה קוגן', 1, 4.92, 1210, 15, '', '', 'עברית, רוסית', { sore: 380, dress: 300, cath: 110 }],
+  ['דנה כהן', 1, 4.90, 411, 5, '', '', 'עברית', { inj: 130, im: 120 }],
+  ['מוחמד עלי', 0, 4.89, 620, 9, '', '', 'עברית, ערבית', { zonda: 140, cath: 150 }],
 ];
-const PAL = ['#E5484D', '#F2811D', '#8E4EC6', '#0EA5E9', '#12A150', '#D6409F', '#3E63DD', '#12A594', '#C27C0E', '#E54666', '#0090FF'];
+const PAL = ['#2B6CB0', '#B7791F', '#2F855A', '#7A4CC2', '#C05621', '#D53F8C', '#0E7FB8', '#4A5568', '#9B4DCA', '#2C7A7B', '#C53030'];
 const initials = n => n.split(' ').map(w => w[0]).slice(0, 2).join('');
-const PATIENTS = [['רחל גבאי', 78, 'סוכרת סוג 2, אלרגיה לפניצילין'], ['משה אלון', 65, 'אחרי החלפת ברך, נוטל קומדין'], ['אביטל כץ', 34, 'שבוע אחרי ניתוח קיסרי'], ['יוסף נסים', 82, 'מרותק למיטה, בן משפחה בבית'], ['מאיה רוזן', 29, 'ללא רקע רפואי'], ['שמעון דהן', 71, 'יתר לחץ דם, קוצב לב']];
-
+const AREAS = ['נווה שאנן', 'הדר', 'כרמל מרכזי', 'בת גלים', 'רמת אלון', 'קריית חיים', 'אחוזה'];
 /* ================= map ================= */
 const mapEl = document.getElementById('map'), sheet = document.getElementById('sheet'), pinEl = document.getElementById('centerPin');
 const map = L.map(mapEl, { zoomControl: false, attributionControl: true, zoomSnap: 0.5, minZoom: 12, maxZoom: 18 }).setView(CENTER, 15);
@@ -474,7 +490,7 @@ const ProcLayer = L.GridLayer.extend({
 });
 
 const dark = () => { const t = document.documentElement.dataset.theme; return t ? t === 'dark' : matchMedia('(prefers-color-scheme: dark)').matches; };
-let baseLayer = null, useProc = false;
+let baseLayer = null, useProc = true; // external map tiles are blocked in this preview, so the drawn map is used
 function setBase() {
   if (baseLayer) map.removeLayer(baseLayer);
   if (useProc) { baseLayer = new ProcLayer({ attribution: 'מפת הדמיה' }); }
@@ -523,7 +539,7 @@ const nurses = NURSE_DATA.map((d, id) => {
   const [name, f, rating, visits, years, veh, plate, langs, spec] = d;
   const pos = { u: rnd(-1100, 1300), v: rnd(-500, 900) };
   const n = { id, c: PAL[id % PAL.length], name, f, rating, visits, years, veh, plate, langs, spec, pos, mode: 'wander', speed: rnd(7, 11), path: null };
-  n.marker = L.marker(uv2ll(pos), { icon: icon(`<div class="nm" style="--c:${n.c}">${initials(name)}</div>`), keyboard: false }).addTo(map);
+  n.marker = L.marker(uv2ll(pos), { icon: icon(`<div class="nm anon"></div>`), keyboard: false }).addTo(map);
   newWander(n);
   return n;
 });
@@ -531,8 +547,10 @@ function newWander(n) { n.path = mkPath(route(n.pos, clampLand({ u: n.pos.u + rn
 const nEl = n => n.marker.getElement()?.firstElementChild;
 function nClass(n, cls, label) {
   const el = nEl(n); if (!el) return;
-  el.className = 'nm' + (cls ? ' ' + cls : '');
-  el.innerHTML = initials(n.name) + (label ? `<span class="tagl">${label}</span>` : '');
+  const show = /assigned/.test(cls || '');
+  el.className = 'nm' + (show ? '' : ' anon') + (cls ? ' ' + cls : '');
+  el.style.setProperty('--c', show ? n.c : '');
+  el.innerHTML = (show ? initials(n.name) : '') + (label ? `<span class="tagl">${label}</span>` : '');
 }
 const available = () => nurses.filter(n => n.mode === 'wander');
 const girl = (n, f, m) => n.f ? f : m;
@@ -562,25 +580,34 @@ let timers = [];
 const later = (fn, ms) => timers.push(setTimeout(fn, ms));
 const every = (fn, ms) => timers.push(setInterval(fn, ms));
 const clearTimers = () => { timers.forEach(t => { clearTimeout(t); clearInterval(t); }); timers = []; };
-const esc = s => s.replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
+const esc = s => String(s).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
 const etaMin = m => Math.max(1, Math.ceil(m / 3.2 / 60));
 const clock = mins => { const d = new Date(Date.now() + mins * 60000); return d.toLocaleTimeString('he-IL', { hour: '2-digit', minute: '2-digit' }); };
+// arrival shown as a "by" time rounded up to the next 10 minutes, never as a minute countdown
+const byTime = mins => { const d = new Date(Date.now() + (mins + 5) * 60000); d.setMinutes(Math.ceil(d.getMinutes() / 10) * 10, 0, 0); return d.toLocaleTimeString('he-IL', { hour: '2-digit', minute: '2-digit' }); };
 const fmtM = m => m >= 1000 ? (m / 1000).toFixed(1) + ' ק״מ' : Math.round(m / 10) * 10 + ' מ׳';
+const nis = n => '₪' + n.toLocaleString('he-IL');
 let toastT;
-function toast(msg) { const t = document.getElementById('toast'); t.textContent = msg; t.classList.add('show'); clearTimeout(toastT); toastT = setTimeout(() => t.classList.remove('show'), 2800); }
+function toast(msg) { const t = document.getElementById('toast'); t.textContent = msg; t.classList.add('show'); clearTimeout(toastT); toastT = setTimeout(() => t.classList.remove('show'), 3200); }
 let routeLine = null;
 function drawRoute(path) {
   if (routeLine) map.removeLayer(routeLine);
   routeLine = L.polyline(path.pts.map(uv2ll), { color: css('--brand'), weight: 5, opacity: .85, lineCap: 'round', lineJoin: 'round', dashArray: '1 9' }).addTo(map);
 }
 function clearRoute() { if (routeLine) { map.removeLayer(routeLine); routeLine = null; } }
+const first = n => n.name.split(' ')[0];
 
-/* ================= PATIENT FLOW ================= */
+/* ================= PATIENT FLOW (mobile web) ================= */
 let MODE = 'patient';
-const P = { step: 'home', svc: null, loc: { u: 120, v: 180 }, when: 'now', fund: 'maccabi', notes: '', reqs: [], nurse: null, chat: [], rating: 5, tip: 10, prog: 0, cancelAsk: false, chatOpen: false };
+const P = {
+  step: 'home', svc: null, type: 0, loc: { u: 120, v: 180 }, when: 'asap', forWho: 'dad', auth: false, rx: false,
+  gender: 'any', lang: 'עברית', pet: false, lift: true, family: '052-555-0142', verified: false,
+  reqs: [], nurse: null, phase: '', rating: 5, cancelAsk: false
+};
 const patientMarker = L.marker([0, 0], { icon: pinIcon(false), keyboard: false });
 const svcById = id => SERVICES.find(s => s.id === id);
-const total = () => P.svc.price + (P.when === 'now' ? 30 : 0);
+const canOrder = () => (!P.svc.rx || P.rx) && (P.forWho === 'me' || P.auth);
+const forLabel = () => ({ me: 'עבורי', dad: 'עבור אבא', mom: 'עבור אמא', other: 'עבור מישהו אחר' })[P.forWho];
 
 function pinMode(on) {
   pinEl.hidden = !on;
@@ -593,301 +620,320 @@ map.on('moveend', () => {
   const ll = map.containerPointToLatLng(visCenter());
   const p = ll2uv(ll); p.v = Math.max(p.v, coast(p.u) + 90);
   P.loc = p;
-  document.querySelectorAll('.addr-text').forEach(e => e.textContent = address(p) + ', תל אביב');
+  document.querySelectorAll('.addr-text').forEach(e => e.textContent = address(p) + ', חיפה');
 });
-map.on('dragstart', () => { if (MODE === 'patient' && !pinEl.hidden) document.getElementById('pinLbl').textContent = 'שחרור לקביעת כתובת'; });
+map.on('dragstart', () => { if (MODE === 'patient' && !pinEl.hidden) document.getElementById('pinLbl').textContent = 'שחררו כדי לקבוע כתובת'; });
 map.on('dragend', () => document.getElementById('pinLbl').textContent = 'הכתובת לביקור');
 
-function addrBlock(hint) {
-  return `<div class="addr"><span class="dot">${ico('pin', 18)}</span><div class="grow"><b class="addr-text">${address(P.loc)}, תל אביב</b><span>${hint}</span></div></div>`;
+const addrBlock = hint => `<div class="addr"><span class="dot">${ico('pin', 18)}</span><div class="grow"><b class="addr-text">${address(P.loc)}, חיפה</b><span>${hint}</span></div></div>`;
+const chips = (act, list, cur) => `<div class="chips">${list.map(([v, l, s]) => `<button class="chip" data-act="${act}" data-v="${v}" aria-pressed="${cur === v}">${l}${s ? `<small>${s}</small>` : ''}</button>`).join('')}</div>`;
+const tick2 = (act, on, text) => `<button class="tickrow" data-act="${act}" aria-pressed="${on}"><span class="box">${ico('check', 14, 3)}</span><span>${text}</span></button>`;
+
+// score used to pick the best match among nurses who accepted: distance, experience in this service, language, gender
+function score(n) {
+  const d = dist(n.pos, P.loc) / 1000, exp = (n.spec[P.svc.id] || 0) / 100;
+  return -d * 1.2 + exp + (n.langs.includes(P.lang) ? 1.5 : -3) + (P.gender === 'any' || (P.gender === 'f') === !!n.f ? 0 : -9);
 }
-function nearestEta() { const a = available(); if (!a.length) return '–'; return etaMin(Math.min(...a.map(n => dist(n.pos, P.loc) * 1.3))); }
+function whyChosen(n) {
+  const r = [];
+  if (n.spec[P.svc.id]) r.push(`ביצעה ${n.spec[P.svc.id]} טיפולים כאלה`.replace('ביצעה', n.f ? 'ביצעה' : 'ביצע'));
+  if (P.lang !== 'עברית' && n.langs.includes(P.lang)) r.push(`${n.f ? 'מדברת' : 'מדבר'} ${P.lang}`);
+  r.push(`${fmtM(dist(n.pos, P.loc) * 1.3)} ממך`);
+  return r.join(' · ');
+}
 
 const VIEW = {
   home() {
     const h = new Date().getHours(), hi = h < 12 ? 'בוקר טוב' : h < 17 ? 'צהריים טובים' : h < 21 ? 'ערב טוב' : 'לילה טוב';
     return `<div class="stack">
-      <div class="greet"><span class="eyebrow">${hi}</span><h1 class="h1">איזה טיפול צריך היום?</h1></div>
-      <div class="trust"><span style="--c:var(--ok)">${ico('shield', 14, 2.4)} אחיות מוסמכות</span><span>${ico('clock', 14, 2.4)} מגיעות תוך דקות</span><span style="--c:var(--amber)">${ico('star', 14)} 4.9 דירוג ממוצע</span></div>
+      <div class="greet"><span class="eyebrow">${hi}</span><h1 class="h1">איזה טיפול צריך?</h1></div>
+      <div class="trust"><span style="--c:var(--ok)">${ico('shield', 14, 2.4)} אחיות מוסמכות ומאומתות</span><span>${ico('box', 14, 2.2)} מחיר מלא כולל ציוד</span><span style="--c:var(--ok)">${ico('lock', 14, 2.2)} בלי שאלון רפואי</span></div>
       ${addrBlock('גררו את המפה כדי לדייק את הכתובת')}
       <div class="svc-grid">${SERVICES.map(s => `<button class="svc" style="--c:${s.c}" data-act="svc" data-v="${s.id}">
         <span class="ic" style="--c:${s.c}">${ico(s.icon, 24)}</span><b>${s.name}</b>
-        <span class="meta num"><span class="price">₪${s.price}</span><span>${s.mins} דק׳</span></span></button>`).join('')}</div>
-      <div class="live" id="liveLine"><i></i><span><b class="num" id="availN">${available().length}</b> אחיות זמינות לידך · הקרובה במרחק <b class="num" id="nearN">${nearestEta()}</b> דק׳</span></div>
+        <span class="meta num"><span class="price">${nis(s.price)}</span><span>כולל ציוד</span></span></button>`).join('')}</div>
+      <div class="live"><i></i><span><b class="num" id="availN">${available().length}</b> אחיות זמינות היום בחיפה והקריות</span></div>
+      <button class="helprow" data-act="talk"><span>לא בטוחים מה צריך?</span><b>דברו עם אחות ←</b></button>
+      <div class="sos">השירות לא מיועד למצבי חירום. בחירום חייגו <b>101</b>.</div>
+      <div class="demo-note">אתר לנייד, בלי להוריד אפליקציה. המחירים לדוגמה.</div>
     </div>`;
   },
   details() {
-    const s = P.svc, fund = FUNDS.find(f => f[0] === P.fund), refund = P.fund === 'private' ? 0 : Math.round(s.price * .4);
+    const s = P.svc;
     return `<div class="stack">
       <div class="row"><button class="back" data-act="back" aria-label="חזרה">${ico('back', 18)}</button><span class="eyebrow">חזרה לטיפולים</span></div>
       <div class="row" style="align-items:flex-start;gap:14px"><span class="ic lg" style="--c:${s.c}">${ico(s.icon, 30)}</span>
-        <div class="grow"><h1 class="h1">${s.name}</h1><div class="muted small">${s.desc}</div></div></div>
-      <ul class="incl">${s.incl.map(i => `<li>${ico('check', 16, 2.6)}<span>${i}</span></li>`).join('')}</ul>
+        <div class="grow"><h1 class="h1">${s.name}</h1><div class="muted small">אחות מוסמכת עם ניסיון בטיפול הזה. כל הציוד המתכלה כלול במחיר.</div></div></div>
+      ${s.types.length ? `<div><div class="eyebrow">סוג</div><div style="margin-top:6px">${chips('type', s.types.map((t, i) => [String(i), t]), String(P.type))}</div></div>` : ''}
+      <div><div class="eyebrow">ההזמנה עבור</div><div style="margin-top:6px">${chips('forWho', FOR, P.forWho)}</div></div>
+      ${P.forWho !== 'me' ? tick2('auth', P.auth, 'אני מוסמך/ת להזמין טיפול עבורו או עבורה ולמסור את פרטי ההתקשרות') : ''}
+      ${s.rx ? tick2('rx', P.rx, 'יש הפניה או מרשם רופא בתוקף. האחות תבדוק אותם בבית, ואנחנו לא שומרים עותק.') : ''}
+      <div class="calm">${ico('phone', 16, 2.2)}<span>בלי שאלון רפואי. האחות תתקשר לפני שהיא יוצאת ותשאל את מה שצריך. הפרטים הרפואיים לא נשמרים באפליקציה.</span></div>
+      <div><div class="eyebrow">מתי</div><div style="margin-top:6px">${chips('when', WHEN, P.when)}</div></div>
       ${addrBlock('אפשר להזיז את המפה כדי לשנות')}
-      <div><div class="eyebrow">מתי</div><div class="chips" style="margin-top:6px">${WHEN.map(w => `<button class="chip" data-act="when" data-v="${w[0]}" aria-pressed="${P.when === w[0]}">${w[1]}<small>${w[2]}</small></button>`).join('')}</div></div>
-      <div><div class="eyebrow">קופת חולים</div><div class="chips" style="margin-top:6px">${FUNDS.map(f => `<button class="chip" data-act="fund" data-v="${f[0]}" aria-pressed="${P.fund === f[0]}">${f[1]}</button>`).join('')}</div></div>
-      <div><label class="eyebrow" for="notes">הערות לאחות</label>
-        <textarea id="notes" style="margin-top:6px" placeholder="לדוגמה: קוד לבניין 1470, קומה 3. יש הפניה מהרופא.">${esc(P.notes)}</textarea></div>
+      <div class="chips"><button class="chip" data-act="lift" aria-pressed="${P.lift}">יש מעלית</button><button class="chip" data-act="pet" aria-pressed="${P.pet}">יש חיה בבית</button></div>
+      <div><div class="eyebrow">מי תגיע</div><div style="margin-top:6px">${chips('gender', GENDER, P.gender)}</div>
+        <div style="margin-top:8px">${chips('lang', LANGS.map(l => [l, l]), P.lang)}</div></div>
+      <div><label class="eyebrow" for="family">לעדכן גם בן משפחה (לא חובה)</label>
+        <input id="family" class="field num" inputmode="tel" value="${esc(P.family)}" placeholder="מספר טלפון">
+        <div class="muted small" style="margin-top:4px">יקבל עדכוני הגעה וסיום בלבד, בלי סוג הטיפול.</div></div>
       <div class="sum num">
-        <div><span>${s.short}</span><span>₪${s.price}</span></div>
-        ${P.when === 'now' ? '<div><span>הגעה מיידית</span><span>₪30</span></div>' : ''}
-        <div class="tot"><span>סה״כ</span><span>₪${total()}</span></div>
-        ${refund ? `<div class="save small"><span>החזר שב״ן משוער (${fund[1]})</span><span>−₪${refund}</span></div>` : ''}
+        <div><span>${s.name}${s.types.length ? ' · ' + s.types[P.type] : ''}</span><span>${nis(s.price)}</span></div>
+        <div><span>ציוד מתכלה</span><span>כלול</span></div>
+        <div class="tot"><span>סה״כ</span><span>${nis(s.price)}</span></div>
+        <div class="muted small"><span>החיוב רק אחרי שהביקור הסתיים. ביטול חינם עד שהאחות יוצאת לדרך.</span></div>
       </div>
-      <button class="cta" data-act="order">הזמנת אחות · ₪${total()}</button>
-      <div class="demo-note">דמו: אין חיוב אמיתי ואין אחות אמיתית בדרך.</div>
+      <button class="cta" data-act="order" ${canOrder() ? '' : 'disabled'}>המשך · ${nis(s.price)}</button>
+      ${canOrder() ? '' : `<div class="demo-note">כדי להמשיך צריך לסמן ${s.rx && !P.rx ? 'שיש הפניה' : ''}${s.rx && !P.rx && P.forWho !== 'me' && !P.auth ? ' ו' : ''}${P.forWho !== 'me' && !P.auth ? 'שאתם מוסמכים להזמין' : ''}.</div>`}
+    </div>`;
+  },
+  verify() {
+    return `<div class="stack">
+      <div class="row"><button class="back" data-act="toDetails" aria-label="חזרה">${ico('back', 18)}</button><span class="eyebrow">כניסה בלי סיסמה</span></div>
+      <h1 class="h1">שלחנו קוד ל-050-•••-1234</h1>
+      <div class="otp num">${'4821'.split('').map(d => `<span>${d}</span>`).join('')}</div>
+      <div class="muted small">הקוד הוזן אוטומטית מה-SMS. בפעם הבאה תישארו מחוברים.</div>
+      <div class="sum num"><div><span>אמצעי תשלום</span><span>ויזה •••• 4417</span></div><div class="muted small"><span>נתפוס מסגרת עכשיו. החיוב בפועל רק בסוף הביקור.</span></div></div>
+      <button class="cta" data-act="confirm">הזמנת אחות · ${nis(P.svc.price)}</button>
     </div>`;
   },
   searching() {
-    const st = { sent: ['נשלחה קריאה', ''], seen: ['צופה בקריאה', 'see'], no: ['דחתה', 'no'], ok: ['קיבלה', 'ok'], closed: ['הקריאה נסגרה', ''] };
+    const acc = P.reqs.filter(r => r.s === 'ok').length, busy = P.reqs.filter(r => r.s === 'busy').length;
+    const st = P.phase;
+    const line = (done, now, t) => `<li class="${done ? 'done' : now ? 'now' : ''}"><i></i>${t}</li>`;
     return `<div class="stack">
-      <div class="radar" style="--c:${P.svc.c}"><span></span><span></span><span></span><span class="core">${ico(P.svc.icon, 22)}</span></div>
-      <div style="text-align:center"><h1 class="h1">מחפשים אחות פנויה</h1><div class="muted small">הקריאה נשלחה לאחיות הקרובות ביותר עם הכשרה ל${P.svc.short}</div></div>
-      <ul class="reqs">${P.reqs.map(r => `<li><span class="av" style="--c:${r.n.c}">${initials(r.n.name)}</span>
-        <div class="grow"><b>${r.n.name}</b><div class="muted small num">${fmtM(dist(r.n.pos, P.loc) * 1.3)} ממך${r.why ? ' · ' + r.why : ''}</div></div>
-        <span class="pill ${st[r.s][1]}">${st[r.s][0]}</span></li>`).join('')}</ul>
-      <button class="btn danger" data-act="cancelSearch">ביטול הקריאה</button>
+      <div class="radar calm-radar" style="--c:var(--brand)"><span class="core">${ico(P.svc.icon, 22)}</span></div>
+      <div style="text-align:center"><h1 class="h1">מאתרים אחות מוסמכת ל${P.svc.short}</h1><div class="muted small">נעדכן ברגע שנמצאה. לרוב זה לוקח כמה דקות.</div></div>
+      <ul class="tl">
+        ${line(st !== 'sent', st === 'sent', 'פנינו ל-3 האחיות המתאימות ביותר באזור')}
+        ${line(st === 'pick' || st === 'done', st === 'wait', acc ? `${acc} אישרו${busy ? ` · ${busy} באמצע טיפול אחר` : ''}` : 'מחכים לאישור')}
+        ${line(st === 'done', st === 'pick', 'בוחרים את ההתאמה הטובה ביותר: ניסיון בטיפול, שפה ומרחק')}
+      </ul>
+      <button class="btn danger" data-act="cancelSearch">ביטול ההזמנה</button>
     </div>`;
   },
   matched() {
-    const n = P.nurse, rem = n.path.total - n.path.d, arrived = P.step === 'arrived';
-    const steps = ['הקריאה התקבלה', arrived ? `${n.name.split(' ')[0]} ${girl(n, 'הגיעה', 'הגיע')}` : 'בדרך אליך', 'טיפול', 'סיכום ותשלום'];
-    const idx = arrived ? 1 : 1;
-    if (P.chatOpen) return VIEW.chat();
+    const n = P.nurse, rem = n.path ? n.path.total - n.path.d : 0, ph = P.phase;
+    const steps = [['assigned', 'האחות שובצה'], ['called', 'שיחת היכרות'], ['enroute', 'בדרך אליכם'], ['arrived', 'הגיעה'], ['visit', 'בביקור']];
+    const idx = steps.findIndex(s => s[0] === ph);
+    const head = ph === 'assigned'
+      ? `<div><div class="eyebrow">${n.f ? 'האחות שלך' : 'האח שלך'}</div><h1 class="h1">${first(n)} ${n.f ? 'תתקשר' : 'יתקשר'} אליכם בדקות הקרובות</h1><div class="muted small">להכיר, ולשאול את מה ${n.f ? 'שהיא צריכה' : 'שהוא צריך'} לדעת לפני היציאה. השיחה מגיעה מהמספר של השירות.</div></div>`
+      : ph === 'called'
+      ? `<div><div class="eyebrow">שיחה הסתיימה</div><h1 class="h1">${first(n)} ${n.f ? 'יוצאת' : 'יוצא'} לדרך</h1></div>`
+      : ph === 'arrived'
+      ? `<div><div class="eyebrow">${n.f ? 'האחות כאן' : 'האח כאן'}</div><h1 class="h1">${first(n)} בכניסה</h1><div class="muted small">${n.f ? 'היא תזדהה' : 'הוא יזדהה'} עם תעודת אחות מוסמכת.</div></div>`
+      : ph === 'visit'
+      ? `<div><div class="eyebrow">בביקור</div><h1 class="h1">${first(n)} ${n.f ? 'נמצאת' : 'נמצא'} אצלכם</h1><div class="muted small">נעדכן כשהביקור יסתיים.</div></div>`
+      : `<div class="row between"><div><div class="eyebrow">בדרך אליכם</div><h1 class="h1">${first(n)} ${n.f ? 'תגיע' : 'יגיע'} עד <span class="num" id="byT">${byTime(etaMin(rem))}</span></h1></div><span class="pill ok">מעקב חי</span></div>`;
     return `<div class="stack">
-      ${arrived
-        ? `<div><div class="eyebrow">${girl(n, 'האחות', 'האח')} כאן</div><h1 class="h1">${n.name.split(' ')[0]} ${girl(n, 'מחכה', 'מחכה')} בכניסה</h1><div class="muted small">נא לפתוח את הדלת. ${girl(n, 'היא', 'הוא')} ${girl(n, 'תזדהה', 'יזדהה')} עם תעודת אחות מוסמכת.</div></div>`
-        : `<div class="row between"><div class="eta"><b class="num" id="etaN">${etaMin(rem)}</b><span>דק׳ עד ההגעה</span></div><span class="pill ok num" id="etaClock">הגעה ${clock(etaMin(rem))}</span></div>`}
+      ${head}
       <div class="ncard"><span class="av lg" style="--c:${n.c}">${initials(n.name)}</span>
         <div class="grow"><div class="name">${n.name}</div>
-          <div class="small muted"><span class="star">★</span> <b class="num">${n.rating.toFixed(2)}</b> · <span class="num">${n.visits.toLocaleString('he-IL')}</span> ביקורים · ${n.years} שנות ותק</div>
-          <div class="small" style="margin-top:4px">${n.veh}${n.plate ? ` <span class="plate">${n.plate}</span>` : ''}</div></div></div>
-      <div class="tags"><span class="tag v">${ico('shield', 12, 2.4)} ${girl(n, 'אחות מוסמכת', 'אח מוסמך')} · רישיון ${10000 + n.id * 3917}</span><span class="tag">מומחיות: ${n.spec}</span><span class="tag">${n.langs}</span></div>
-      <div class="btns"><button class="btn" data-act="chat">${ico('chat', 18)} צ׳אט${P.chat.filter(m => m.who === 'them').length ? ' <span class="pill ok num">' + P.chat.filter(m => m.who === 'them').length + '</span>' : ''}</button><button class="btn" data-act="call">${ico('phone', 18)} שיחה</button></div>
-      <ul class="tl">${steps.map((s, i) => `<li class="${i < idx ? 'done' : i === idx ? 'now' : ''}"><i></i>${s}</li>`).join('')}</ul>
-      ${arrived ? `<button class="cta" data-act="opened">פתחתי את הדלת</button>` : ''}
-      ${P.cancelAsk
-        ? `<div class="alert bad">ביטול אחרי שהאחות יצאה לדרך כרוך בדמי ביטול של ₪25.</div><div class="btns"><button class="btn danger" data-act="cancelYes">כן, לבטל</button><button class="btn" data-act="cancelNo">השארת ההזמנה</button></div>`
-        : `<button class="btn danger" data-act="cancelRide" style="flex:none">ביטול הביקור</button>`}
-    </div>`;
-  },
-  chat() {
-    const n = P.nurse;
-    return `<div class="stack">
-      <div class="row"><button class="back" data-act="closeChat" aria-label="חזרה">${ico('back', 18)}</button><span class="av" style="--c:${n.c}">${initials(n.name)}</span><div class="grow"><b>${n.name}</b><div class="muted small">ההודעות עוברות דרך האפליקציה</div></div></div>
-      <div class="chatlog" id="chatlog"></div>
-      <div class="chips">${['הקוד לבניין 1470', 'קומה 3, דירה 7', 'יש חניה בחוץ?', 'עוד כמה זמן?', 'יש כלב בבית'].map(q => `<button class="chip" data-act="quick" data-v="${q}">${q}</button>`).join('')}</div>
-      <form class="chatform" id="chatform"><input id="chatin" placeholder="כתבו הודעה…" autocomplete="off"><button aria-label="שליחה">${ico('send', 18)}</button></form>
-    </div>`;
-  },
-  treating() {
-    const s = P.svc, done = P.prog;
-    return `<div class="stack">
-      <div><div class="eyebrow">בטיפול · ${s.short}</div><h1 class="h1">${P.nurse.name.split(' ')[0]} ${girl(P.nurse, 'מטפלת', 'מטפל')} בך</h1></div>
-      <div class="bar"><i style="width:${Math.round(done / s.steps.length * 100)}%"></i></div>
-      <ul class="checks">${s.steps.map((st, i) => `<li class="${i < done ? 'on' : i === done ? 'cur' : 'wait'}"><span class="box">${ico('check', 14, 3)}</span>${st}</li>`).join('')}</ul>
-      <div class="muted small">בדמו הטיפול מקוצר לכמה שניות. במציאות: כ-${s.mins} דקות.</div>
+          <div class="small muted num">${n.spec[P.svc.id] ? `${n.f ? 'ביצעה' : 'ביצע'} ${n.spec[P.svc.id]} טיפולים כאלה · ` : ''}${n.years} שנות ותק · <span class="star">★</span> ${n.rating.toFixed(1)}</div>
+          <div class="small" style="margin-top:4px">${n.f ? 'מדברת' : 'מדבר'} ${n.langs}</div></div></div>
+      <div class="tags"><span class="tag v">${ico('shield', 12, 2.4)} רישיון משרד הבריאות מאומת</span><span class="tag">נבחר${n.f ? 'ה' : ''} כי: ${whyChosen(n)}</span></div>
+      <ul class="tl">${steps.map((s, i) => `<li class="${i < idx ? 'done' : i === idx ? 'now' : ''}"><i></i>${s[1]}</li>`).join('')}</ul>
+      ${P.family ? `<div class="calm">${ico('family', 16, 2)}<span>בן המשפחה (<span class="num">${esc(P.family)}</span>) מקבל עדכונים: "${ph === 'enroute' ? 'האחות בדרך' : ph === 'arrived' || ph === 'visit' ? 'האחות הגיעה' : 'נמצאה אחות'}". בלי סוג הטיפול.</span></div>` : ''}
+      ${ph === 'arrived' ? `<button class="cta" data-act="opened">פתחתי את הדלת</button>` : ''}
+      <div class="btns"><button class="btn" data-act="call">${ico('phone', 18)} התקשרות</button>${ph === 'visit' || ph === 'arrived' ? '' : P.cancelAsk ? '' : `<button class="btn danger" data-act="cancelRide">ביטול</button>`}</div>
+      ${P.cancelAsk ? (ph === 'assigned' || ph === 'called'
+        ? `<div class="alert">${first(n)} עוד לא ${n.f ? 'יצאה' : 'יצא'} לדרך, אז הביטול בחינם.</div><div class="btns"><button class="btn danger" data-act="cancelYes">כן, לבטל</button><button class="btn" data-act="cancelNo">השארת ההזמנה</button></div>`
+        : `<div class="alert bad">${first(n)} כבר בדרך. ביטול עכשיו כרוך בדמי יציאה של ₪60, שעוברים ${n.f ? 'לאחות' : 'לאח'}.</div><div class="btns"><button class="btn danger" data-act="cancelYes">כן, לבטל</button><button class="btn" data-act="cancelNo">השארת ההזמנה</button></div>`) : ''}
     </div>`;
   },
   done() {
-    const s = P.svc, n = P.nurse, refund = P.fund === 'private' ? 0 : Math.round(s.price * .4);
+    const s = P.svc, n = P.nurse;
     return `<div class="stack">
-      <div style="text-align:center"><div class="done-badge">${ico('check', 32, 3)}</div><div class="eyebrow">הטיפול הסתיים</div><h1 class="h1">איך היה הביקור עם ${n.name.split(' ')[0]}?</h1></div>
+      <div style="text-align:center"><div class="done-badge">${ico('check', 32, 3)}</div><div class="eyebrow">הביקור הסתיים</div><h1 class="h1">איך היה עם ${first(n)}?</h1></div>
       <div class="stars">${[1, 2, 3, 4, 5].map(i => `<button data-act="star" data-v="${i}" class="${i <= P.rating ? 'on' : ''}" aria-label="${i} כוכבים">${ico('star', 34)}</button>`).join('')}</div>
-      <div><div class="eyebrow">טיפ ${girl(n, 'לאחות', 'לאח')}</div><div class="chips" style="margin-top:6px">${[0, 10, 20, 30].map(t => `<button class="chip num" data-act="tip" data-v="${t}" aria-pressed="${P.tip === t}">${t ? '₪' + t : 'בלי'}</button>`).join('')}</div></div>
-      <div class="receipt num"><div class="eyebrow"><span>פירוט חיוב</span><span>${new Date().toLocaleDateString('he-IL')}</span></div>
-        <div><span>${s.name}</span><span>₪${s.price}</span></div>
-        ${P.when === 'now' ? '<div><span>הגעה מיידית</span><span>₪30</span></div>' : ''}
-        ${P.tip ? `<div><span>טיפ</span><span>₪${P.tip}</span></div>` : ''}
-        <div style="font-weight:700"><span>חויב בכרטיס •••• 4417</span><span>₪${total() + P.tip}</span></div>
-        ${refund ? `<div class="muted small"><span>הוגשה בקשת החזר לשב״ן</span><span>₪${refund}</span></div>` : ''}
-        <div class="muted small"><span>קבלה</span><span>${P.invoice}</span></div>
+      <div class="receipt num"><div class="eyebrow"><span>קבלה</span><span>${new Date().toLocaleDateString('he-IL')}</span></div>
+        <div><span>ביקור אחות בית</span><span>${nis(s.price)}</span></div>
+        <div style="font-weight:700"><span>חויב בכרטיס •••• 4417</span><span>${nis(s.price)}</span></div>
+        <div class="muted small"><span>בקבלה ובהודעות לא מופיע סוג הטיפול</span><span>${P.invoice}</span></div>
       </div>
-      ${s.id === 'blood' ? '<div class="muted small">הדגימות בדרך למעבדה. התוצאות יופיעו באפליקציית הקופה תוך 24–48 שעות.</div>' : ''}
+      <button class="btn" data-act="again" style="flex:none">לקבוע ביקור נוסף עם ${first(n)}</button>
+      <div class="calm">${ico('phone', 16, 2.2)}<span>יש שאלה רפואית? פנו לרופא המטפל. במצב חירום חייגו 101.</span></div>
       <button class="cta" data-act="finish">שליחת דירוג</button>
     </div>`;
   },
 };
-VIEW.arrived = VIEW.matched;
 
 function render() {
   if (MODE === 'nurse') return renderNurse();
   sheet.innerHTML = VIEW[P.step]();
-  if (P.chatOpen && document.getElementById('chatlog')) { renderChat(); }
 }
 
 function goHome() {
   clearTimers(); clearRoute();
-  P.step = 'home'; P.svc = null; P.nurse = null; P.reqs = []; P.chat = []; P.cancelAsk = false; P.chatOpen = false; P.rating = 5; P.tip = 10;
-  for (const n of nurses) { if (n.mode !== 'wander') newWander(n); nClass(n, ''); }
+  Object.assign(P, { step: 'home', svc: null, nurse: null, reqs: [], phase: '', cancelAsk: false, rating: 5, rx: false, type: 0 });
+  for (const n of nurses) { if (n.mode !== 'wander' && n.mode !== 'off') newWander(n); nClass(n, ''); }
   render(); pinMode(true); placeAt(uv2ll(P.loc), 15.5);
-  every(() => { const a = document.getElementById('availN'), b = document.getElementById('nearN'); if (a) { a.textContent = available().length; b.textContent = nearestEta(); } }, 1500);
+  every(() => { const a = document.getElementById('availN'); if (a) a.textContent = available().length; }, 1500);
 }
 
 const ACT = {
-  svc(id) { P.svc = svcById(id); P.step = 'details'; render(); sheet.scrollTop = 0; },
+  svc(id) { P.svc = svcById(id); P.type = 0; P.rx = false; P.step = 'details'; render(); sheet.scrollTop = 0; },
   back() { P.step = 'home'; render(); },
+  toDetails() { P.step = 'details'; render(); },
+  type(v) { P.type = +v; render(); },
+  forWho(v) { P.forWho = v; render(); },
+  auth() { P.auth = !P.auth; render(); },
+  rx() { P.rx = !P.rx; render(); },
   when(v) { P.when = v; render(); },
-  fund(v) { P.fund = v; render(); },
-  order() {
+  lift() { P.lift = !P.lift; render(); },
+  pet() { P.pet = !P.pet; render(); },
+  gender(v) { P.gender = v; render(); },
+  lang(v) { P.lang = v; render(); },
+  talk() { toast('אחות מהצוות תחזור אליכם בטלפון תוך כמה דקות (דמו)'); },
+  order() { if (!canOrder()) return; P.step = 'verify'; render(); sheet.scrollTop = 0; },
+  confirm() {
     pinMode(false); patientMarker.setLatLng(uv2ll(P.loc)).addTo(map);
-    if (P.when !== 'now') toast('בדמו מדלגים ישר למועד הביקור');
+    if (P.when !== 'asap') toast('בדמו מדלגים ישר למועד הביקור');
     startSearch();
   },
-  cancelSearch() { toast('הקריאה בוטלה'); goHome(); },
-  chat() { P.chatOpen = true; render(); },
-  closeChat() { P.chatOpen = false; render(); },
-  call() { toast('שיחה מוסווית דרך המוקד: 03-555-0142 (דמו)'); },
+  cancelSearch() { toast('ההזמנה בוטלה. לא חויבתם.'); goHome(); },
+  call() { toast('מתקשרים דרך המספר של השירות. המספרים האישיים מוסתרים בשני הצדדים (דמו).'); },
   cancelRide() { P.cancelAsk = true; render(); },
   cancelNo() { P.cancelAsk = false; render(); },
-  cancelYes() { toast('הביקור בוטל. חויבו דמי ביטול ₪25'); goHome(); },
-  opened() { startTreatment(); },
+  cancelYes() { const free = P.phase === 'assigned' || P.phase === 'called'; toast(free ? 'הביקור בוטל, בלי חיוב' : 'הביקור בוטל. חויבו דמי יציאה ₪60'); goHome(); },
+  opened() { startVisit(); },
   star(v) { P.rating = +v; render(); },
-  tip(v) { P.tip = +v; render(); },
-  finish() { toast(`תודה! הדירוג נשלח ל${P.nurse.name.split(' ')[0]}`); goHome(); },
-  quick(v) { sendMsg(v); },
+  again() { toast(`נשלחה בקשה ל${first(P.nurse)} לביקור הבא. ${P.nurse.f ? 'היא תקבל' : 'הוא יקבל'} אותה ראשון${P.nurse.f ? 'ה' : ''} (דמו)`); },
+  finish() { toast(`תודה! הדירוג נשמר`); goHome(); },
   // nurse mode
   online() { N.online = !N.online; if (N.online) queueRequest(2500); else { clearTimers(); N.req = null; N.step = 'idle'; } renderNurse(); },
   accept() { acceptReq(); },
-  decline() { declineReq('הקריאה הועברה לאחות אחרת'); },
-  nArrived() { N.step = 'onsite'; renderNurse(); },
-  nStart() { N.step = 'treating'; N.checks = []; renderNurse(); },
-  nCheck(i) { i = +i; N.checks.includes(i) ? N.checks.splice(N.checks.indexOf(i), 1) : N.checks.push(i); renderNurse(); },
+  decline() { declineReq('ההצעה הועברה לאחות אחרת'); },
+  nCall() { N.called = true; toast('מתקשרת למשפחה דרך המספר של השירות (דמו)'); renderNurse(); },
+  nGo() { startDrive(); },
+  nArrived() { N.step = 'onsite'; N.ok = []; renderNurse(); },
+  nOk(i) { i = +i; N.ok.includes(i) ? N.ok.splice(N.ok.indexOf(i), 1) : N.ok.push(i); renderNurse(); },
+  nStart() { N.step = 'treating'; N.started = Date.now(); renderNurse(); },
   nFinish() { finishNurseVisit(); },
   nNext() { N.step = 'idle'; N.req = null; clearRoute(); map.removeLayer(N.pm); renderNurse(); queueRequest(4000); fit([uv2ll(me.pos)], 15.5); },
-  nChat() { toast(`נשלחה הודעה ל${N.req.p[0].split(' ')[0]}: "אני בדרך, אגיע בעוד כמה דקות"`); },
 };
-sheet.addEventListener('click', e => { const b = e.target.closest('[data-act]'); if (!b) return; ACT[b.dataset.act]?.(b.dataset.v, b); });
-sheet.addEventListener('input', e => { if (e.target.id === 'notes') P.notes = e.target.value; });
-sheet.addEventListener('submit', e => { if (e.target.id === 'chatform') { e.preventDefault(); const i = document.getElementById('chatin'); if (i.value.trim()) sendMsg(i.value.trim()); i.value = ''; } });
+sheet.addEventListener('click', e => { const b = e.target.closest('[data-act]'); if (!b || b.disabled) return; ACT[b.dataset.act]?.(b.dataset.v, b); });
+sheet.addEventListener('input', e => { if (e.target.id === 'family') P.family = e.target.value.trim(); });
 
 function startSearch() {
-  P.step = 'searching';
-  const cands = available().sort((a, b) => dist(a.pos, P.loc) - dist(b.pos, P.loc)).slice(0, 3);
-  P.reqs = cands.map(n => ({ n, s: 'sent', why: '' }));
+  P.step = 'searching'; P.phase = 'sent';
+  // the 3 best-fit nurses, offered in parallel; the best match among those who accept wins, not the fastest
+  const cands = available().sort((a, b) => score(b) - score(a)).slice(0, 3);
+  P.reqs = cands.map(n => ({ n, s: 'sent' }));
   for (const n of nurses) { if (cands.includes(n)) { n.mode = 'hold'; nClass(n, 'req'); } else nClass(n, 'dim'); }
   render();
   fit([uv2ll(P.loc), ...cands.map(n => uv2ll(n.pos))], 16);
-  const set = (k, s, why = '') => { const r = P.reqs[k]; if (!r) return; r.s = s; r.why = why; if (s === 'no') nClass(r.n, 'no'); render(); };
-  later(() => set(1, 'seen'), 1100);
-  later(() => set(0, 'seen'), 1600);
-  later(() => set(0, 'no', 'באמצע טיפול אחר'), 2700);
-  later(() => set(2, 'seen'), 3000);
+  const set = (k, s) => { const r = P.reqs[k]; if (!r) return; r.s = s; if (s === 'busy') nClass(r.n, 'no'); P.phase = 'wait'; render(); };
+  later(() => set(2, 'ok'), 1300);
+  later(() => set(1, 'busy'), 2000);
+  later(() => set(0, 'ok'), 2600);
+  later(() => { P.phase = 'pick'; render(); }, 3400);
   later(() => {
-    const win = P.reqs[1] || P.reqs[0];
-    P.reqs.forEach(r => { if (r !== win && r.s !== 'no') r.s = 'closed'; });
-    win.s = 'ok'; render();
-    later(() => matched(win.n), 900);
-  }, 4800);
+    const ok = P.reqs.filter(r => r.s === 'ok').map(r => r.n);
+    const win = ok.sort((a, b) => score(b) - score(a))[0] || P.reqs[0].n;
+    P.phase = 'done'; render();
+    later(() => matched(win), 700);
+  }, 4600);
 }
 
 function matched(n) {
-  P.nurse = n; P.step = 'matched';
+  P.nurse = n; P.step = 'matched'; P.phase = 'assigned'; P.cancelAsk = false;
   for (const o of nurses) { if (o !== n) { if (o.mode === 'hold') newWander(o); nClass(o, 'dim'); } }
-  n.path = mkPath(route(n.pos, P.loc)); n.speed = Math.max(n.path.total / 24, 12); n.mode = 'enroute';
+  nClass(n, 'assigned', n.f ? 'שובצה' : 'שובץ');
+  render();
+  fit([uv2ll(P.loc), uv2ll(n.pos)], 16);
+  later(() => { toast(`שיחה נכנסת: ${first(n)} מ״אחות בדרך״`); }, 2200);
+  later(() => { P.phase = 'called'; render(); }, 5200);
+  later(() => depart(n), 7000);
+}
+
+function depart(n) {
+  P.phase = 'enroute'; P.cancelAsk = false;
+  n.path = mkPath(route(n.pos, P.loc)); n.speed = Math.max(n.path.total / 22, 12); n.mode = 'enroute';
   n.onArrive = arrived;
   drawRoute(n.path);
-  nClass(n, 'assigned', `${etaMin(n.path.total)} דק׳`);
+  nClass(n, 'assigned', 'בדרך');
   render();
   fit([uv2ll(P.loc), uv2ll(n.pos)], 16.5);
   every(() => {
     if (n.mode !== 'enroute') return;
-    const rem = n.path.total - n.path.d, m = etaMin(rem);
-    const e = document.getElementById('etaN'), c = document.getElementById('etaClock');
-    if (e) { e.textContent = m; c.textContent = 'הגעה ' + clock(m); }
-    const tl = nEl(n)?.querySelector('.tagl'); if (tl) tl.textContent = m + ' דק׳';
-    // keep the remaining route trimmed
     if (routeLine) routeLine.setLatLngs([uv2ll(n.pos), ...n.path.pts.slice(at(n.path, n.path.d).i).map(uv2ll)]);
   }, 400);
-  later(() => pushThem(`היי, כאן ${n.name.split(' ')[0]} ${girl(n, 'האחות', 'האח')}. ${girl(n, 'יצאתי', 'יצאתי')} אלייך ואגיע בעוד כ-${etaMin(n.path.total)} דקות. יש קוד לבניין?`), 2200);
 }
 
 function arrived() {
-  const n = P.nurse; P.step = 'arrived'; P.cancelAsk = false;
+  const n = P.nurse; P.phase = 'arrived'; P.cancelAsk = false;
   clearRoute();
   n.pos = { ...P.loc }; n.marker.setLatLng(uv2ll(P.loc));
-  nClass(n, 'assigned', girl(n, 'הגיעה', 'הגיע'));
-  render(); toast(`${n.name.split(' ')[0]} ${girl(n, 'הגיעה', 'הגיע')}!`);
-  later(() => { if (P.step === 'arrived') pushThem('אני למטה בכניסה.'); }, 1500);
+  nClass(n, 'assigned', n.f ? 'הגיעה' : 'הגיע');
+  render(); toast(`${first(n)} ${n.f ? 'הגיעה' : 'הגיע'}`);
 }
 
-function startTreatment() {
-  P.step = 'treating'; P.chatOpen = false; P.prog = 0; render();
-  nClass(P.nurse, 'assigned', 'בטיפול');
-  const step = () => { P.prog++; render(); if (P.prog < P.svc.steps.length) later(step, 2200); else later(() => { P.invoice = 'INV-' + new Date().getFullYear() + '-' + Math.floor(rnd(10000, 99999)); P.step = 'done'; render(); nClass(P.nurse, 'assigned', girl(P.nurse, 'סיימה', 'סיים')); }, 1200); };
-  later(step, 1800);
+function startVisit() {
+  P.phase = 'visit'; render();
+  nClass(P.nurse, 'assigned', 'בביקור');
+  later(() => { P.invoice = 'קבלה ' + Math.floor(rnd(10000, 99999)); P.step = 'done'; render(); }, 4500);
 }
 
-/* chat */
-function renderChat() {
-  const log = document.getElementById('chatlog'); if (!log) return;
-  log.innerHTML = P.chat.map(m => `<div class="msg ${m.who}">${esc(m.t)}</div>`).join('') + (P.typing ? `<div class="msg them typing">${P.nurse.name.split(' ')[0]} ${girl(P.nurse, 'מקלידה', 'מקליד')}…</div>` : '');
-  log.scrollTop = log.scrollHeight;
-}
-function pushThem(t) { P.chat.push({ who: 'them', t }); P.typing = false; if (P.chatOpen) renderChat(); else { if (P.step === 'matched' || P.step === 'arrived') render(); toast(`${P.nurse.name.split(' ')[0]}: ${t}`); } }
-function sendMsg(t) {
-  const n = P.nurse; P.chat.push({ who: 'me', t }); renderChat();
-  let r = 'קיבלתי, תודה!';
-  if (/קוד|אינטרקום|דלת/.test(t)) r = 'מעולה, רשמתי את הקוד.';
-  else if (/קומה|דירה/.test(t)) r = 'סבבה, אעלה ישר.';
-  else if (/חני/.test(t)) r = /קטנוע|אופניים/.test(n.veh) ? `אני על ${n.veh === 'קטנוע' ? 'קטנוע' : 'אופניים'}, חניה לא בעיה.` : 'אחפש בכחול-לבן, תודה!';
-  else if (/מתי|זמן|עוד/.test(t)) r = n.mode === 'enroute' ? `בערך ${etaMin(n.path.total - n.path.d)} דקות, אני כבר ${girl(n, 'קרובה', 'קרוב')}.` : 'אני כבר כאן, למטה.';
-  else if (/כלב|חתול/.test(t)) r = `אין בעיה, אני ${girl(n, 'רגילה', 'רגיל')} לחיות.`;
-  else if (/הפני|מרשם/.test(t)) r = 'מצוין, תכינו אותה ליד. אני אסרוק אותה במקום.';
-  later(() => { P.typing = true; renderChat(); }, 600);
-  later(() => pushThem(r), 1900);
-}
-
-/* ================= NURSE MODE ================= */
+/* ================= NURSE MODE (native app) ================= */
 const me = { pos: { u: -300, v: 350 }, mode: 'hold', speed: 14, path: null };
 me.marker = L.marker(uv2ll(me.pos), { icon: icon(`<div class="me">${ico('cross', 14, 3.4)}</div>`, 30), keyboard: false, zIndexOffset: 1000 });
-const N = { online: true, step: 'idle', earn: 486, visits: 3, rating: 4.97, req: null, checks: [], left: 15, pm: L.marker([0, 0], { icon: pinIcon(true), keyboard: false }) };
+const OFFER_SECS = 120;
+const N = { online: true, step: 'idle', earn: 1164, visits: 3, rating: 4.97, req: null, ok: [], left: OFFER_SECS, called: false, pm: L.marker([0, 0], { icon: pinIcon(true), keyboard: false }) };
+const COMMISSION = 0.12; // example only; the business plan sets the real rate
 
 function renderNurse() {
   const r = N.req, nav = document.getElementById('navbar');
   nav.hidden = N.step !== 'enroute';
-  const kpis = `<div class="kpis num"><div class="kpi" style="--c:var(--ok)"><b>₪${N.earn}</b><span>הכנסה היום</span></div><div class="kpi" style="--c:var(--brand)"><b>${N.visits}</b><span>ביקורים</span></div><div class="kpi" style="--c:var(--amber)"><b>${N.rating}</b><span>דירוג</span></div></div>`;
+  const kpis = `<div class="kpis num"><div class="kpi" style="--c:var(--ok)"><b>${nis(N.earn)}</b><span>נטו היום</span></div><div class="kpi" style="--c:var(--brand)"><b>${N.visits}</b><span>ביקורים</span></div><div class="kpi" style="--c:var(--amber)"><b>${N.rating}</b><span>דירוג</span></div></div>`;
   let h = '';
   if (N.step === 'idle') {
     h = `<div class="stack">
-      <div><div class="eyebrow">משמרת · נועה לוי, אחות מוסמכת</div><h1 class="h1">${N.online ? 'מחכה לקריאה הבאה' : 'את במצב לא זמין'}</h1></div>
-      <button class="switch" data-act="online" role="switch" aria-checked="${N.online}"><div><b>${N.online ? 'זמינה לקריאות' : 'לא זמינה'}</b><div class="muted small">${N.online ? 'קריאות באזור מרכז תל אביב' : 'הפעילי כדי לקבל קריאות'}</div></div><span class="tr"></span></button>
+      <div><div class="eyebrow">אפליקציית האחיות · נועה לוי, אחות מוסמכת</div><h1 class="h1">${N.online ? 'מחכה להצעה הבאה' : 'את במצב לא זמין'}</h1></div>
+      <button class="switch" data-act="online" role="switch" aria-checked="${N.online}"><div><b>${N.online ? 'זמינה להצעות' : 'לא זמינה'}</b><div class="muted small">${N.online ? 'הצעות בחיפה והקריות, לטיפולים שסימנת' : 'הפעילי כדי לקבל הצעות'}</div></div><span class="tr"></span></button>
       ${kpis}
-      ${N.online ? `<div class="live"><i></i><span>מחפשים קריאות בסביבה… <b class="num">${nurses.filter(n => n.mode === 'wander').length}</b> אחיות נוספות זמינות</span></div>` : ''}
-      <div class="muted small">בדמו קריאה חדשה נכנסת תוך כמה שניות.</div>
+      <div class="muted small">בדמו הצעה חדשה נכנסת תוך כמה שניות.</div>
     </div>`;
   } else if (N.step === 'incoming') {
-    const s = r.svc, d = dist(me.pos, r.loc) * 1.3;
+    const s = r.svc, d = dist(me.pos, r.loc) * 1.3, fee = Math.round(s.price * COMMISSION), net = s.price - fee;
+    const mm = Math.floor(N.left / 60), ss = String(Math.floor(N.left % 60)).padStart(2, '0');
     h = `<div class="stack"><div class="incoming">
-      <div class="row between"><div class="row"><span class="ic" style="--c:${s.c}">${ico(s.icon, 24)}</span><div><div class="eyebrow">קריאה חדשה</div><h1 class="h1">${s.name}</h1></div></div>
-        <div class="ring"><svg width="64" height="64"><circle cx="32" cy="32" r="27" fill="none" stroke="var(--line)" stroke-width="5"/><circle id="ringC" cx="32" cy="32" r="27" fill="none" stroke="var(--brand)" stroke-width="5" stroke-linecap="round" stroke-dasharray="169.6" stroke-dashoffset="${169.6 * (1 - N.left / 15)}"/></svg><b id="ringN" class="num">${Math.ceil(N.left)}</b></div></div>
-      <div class="row"><span class="av">${initials(r.p[0])}</span><div class="grow"><b>${r.p[0]}, ${r.p[1]}</b><div class="small muted">${r.p[2]}</div></div></div>
-      <div class="sum num"><div><span>כתובת</span><span>${address(r.loc)}</span></div><div><span>מרחק</span><span>${fmtM(d)} · ${etaMin(d)} דק׳</span></div><div><span>זמן טיפול משוער</span><span>${s.mins} דק׳</span></div><div class="tot" style="color:var(--ok)"><span>התשלום לך</span><span>₪${r.pay}</span></div></div>
-      <div class="btns"><button class="btn" data-act="decline">דחייה</button><button class="cta" style="flex:2" data-act="accept">קבלת הקריאה</button></div>
+      <div class="row between"><div class="row"><span class="ic" style="--c:${s.c}">${ico(s.icon, 24)}</span><div><div class="eyebrow">הצעת עבודה</div><h1 class="h1">${s.name}</h1></div></div>
+        <div class="ring"><svg width="64" height="64"><circle cx="32" cy="32" r="27" fill="none" stroke="var(--line)" stroke-width="5"/><circle id="ringC" cx="32" cy="32" r="27" fill="none" stroke="var(--brand)" stroke-width="5" stroke-linecap="round" stroke-dasharray="169.6" stroke-dashoffset="${169.6 * (1 - N.left / OFFER_SECS)}"/></svg><b id="ringN" class="num" style="font-size:14px">${mm}:${ss}</b></div></div>
+      <div class="sum num"><div><span>אזור</span><span>${r.area} · ${fmtM(d)}</span></div><div><span>מתי</span><span>בהקדם</span></div><div><span>${s.rx ? 'הפניה' : 'זמן משוער'}</span><span>${s.rx ? 'המשפחה אישרה שיש' : s.mins + ' דק׳'}</span></div></div>
+      <div class="sum num"><div><span>המטופל משלם</span><span>${nis(s.price)}</span></div><div><span>עמלת השירות (${Math.round(COMMISSION * 100)}%, לדוגמה)</span><span>−${nis(fee)}</span></div><div class="tot" style="color:var(--ok)"><span>נטו לך</span><span>${nis(net)}</span></div></div>
+      <div class="muted small">אם כמה אחיות מאשרות, נבחרת ההתאמה הטובה ביותר (ניסיון, שפה, מרחק). מהירות האישור לא משנה. שם וכתובת מלאה יופיעו רק אם תיבחרי.</div>
+      <div class="btns"><button class="btn" data-act="decline">דילוג</button><button class="cta" style="flex:2" data-act="accept">מעוניינת</button></div>
     </div></div>`;
+  } else if (N.step === 'call') {
+    h = `<div class="stack">
+      <div><div class="eyebrow">נבחרת להזמנה</div><h1 class="h1">משפחת כהן · ${r.svc.name}</h1><div class="muted small">${address(r.loc)}, ${r.area}</div></div>
+      <div class="calm">${ico('phone', 16, 2.2)}<span>התקשרי למשפחה לפני היציאה: הציגי את עצמך ושאלי את מה שצריך לדעת. השיחה עוברת דרך המספר של השירות ולא מוקלטת. את הפרטים הרפואיים לא רושמים באפליקציה.</span></div>
+      <button class="btn" data-act="nCall" style="flex:none">${ico('phone', 18)} ${N.called ? 'השיחה הסתיימה ✓' : 'התקשרות למשפחה'}</button>
+      <button class="cta" data-act="nGo" ${N.called ? '' : 'disabled'}>יצאתי לדרך</button>
+    </div>`;
   } else if (N.step === 'enroute' || N.step === 'onsite') {
     const rem = me.path ? me.path.total - me.path.d : 0, arrivedNow = me.mode === 'hold';
+    const checks = ['הזדהיתי עם תעודת אחות מוסמכת', 'וידאתי את זהות המטופל', ...(r.svc.rx ? ['ראיתי הפניה או מרשם בתוקף'] : [])];
     h = `<div class="stack">
-      <div class="row between"><div><div class="eyebrow">${N.step === 'onsite' ? 'במקום' : 'בדרך למטופל/ת'}</div><h1 class="h1">${r.p[0]}</h1></div>${N.step === 'enroute' ? `<div class="eta"><b class="num" id="nEta">${etaMin(rem)}</b><span>דק׳</span></div>` : ''}</div>
-      <div class="sum"><div><span>טיפול</span><b>${r.svc.name}</b></div><div><span>כתובת</span><span>${address(r.loc)}, קומה ${1 + mod(Math.round(r.loc.u / 7), 6)}</span></div><div><span>רקע</span><span>${r.p[2]}</span></div></div>
-      ${r.note ? `<div class="alert">${r.note}</div>` : ''}
+      <div class="row between"><div><div class="eyebrow">${N.step === 'onsite' ? 'במקום' : 'בדרך'}</div><h1 class="h1">משפחת כהן</h1></div>${N.step === 'enroute' ? `<div class="eta"><b class="num" id="nEta">${etaMin(rem)}</b><span>דק׳</span></div>` : ''}</div>
+      <div class="sum"><div><span>טיפול</span><b>${r.svc.name}</b></div><div><span>כתובת</span><span>${address(r.loc)}, קומה 3</span></div><div><span>גישה</span><span>${r.pet ? 'יש כלב בבית' : 'אין חיות'} · ${r.lift ? 'יש מעלית' : 'אין מעלית'}</span></div></div>
       ${N.step === 'enroute'
-        ? `<div class="btns"><button class="btn" data-act="nChat">${ico('chat', 18)} הודעה למטופל</button></div><button class="cta" id="nArrBtn" data-act="nArrived" ${arrivedNow ? '' : 'disabled'}>הגעתי</button>`
-        : `<ul class="incl"><li>${ico('check', 16, 2.6)}<span>הזדהות עם תעודת אחות</span></li><li>${ico('check', 16, 2.6)}<span>היגיינת ידיים וכפפות</span></li><li>${ico('check', 16, 2.6)}<span>אימות זהות המטופל/ת</span></li></ul><button class="cta" data-act="nStart">התחלת טיפול</button>`}
+        ? `<button class="cta" id="nArrBtn" data-act="nArrived" ${arrivedNow ? '' : 'disabled'}>הגעתי</button>`
+        : `<div class="checks" role="group">${checks.map((c, i) => `<button data-act="nOk" data-v="${i}" class="${N.ok.includes(i) ? 'on' : ''}" aria-pressed="${N.ok.includes(i)}"><span class="box">${ico('check', 14, 3)}</span>${c}</button>`).join('')}</div>
+           <button class="cta" data-act="nStart" ${N.ok.length === checks.length ? '' : 'disabled'}>התחלת ביקור</button>
+           ${r.svc.rx ? '<div class="muted small">אין הפניה? אפשר לא לבצע את הטיפול ולקבל דמי יציאה.</div>' : ''}`}
     </div>`;
   } else if (N.step === 'treating') {
-    const s = r.svc, all = N.checks.length === s.steps.length;
     h = `<div class="stack">
-      <div><div class="eyebrow">טיפול · ${r.p[0]}</div><h1 class="h1">${s.name}</h1></div>
-      <div class="bar"><i style="width:${Math.round(N.checks.length / s.steps.length * 100)}%"></i></div>
-      <div class="checks" role="group">${s.steps.map((st, i) => `<button data-act="nCheck" data-v="${i}" class="${N.checks.includes(i) ? 'on' : ''}" aria-pressed="${N.checks.includes(i)}"><span class="box">${ico('check', 14, 3)}</span>${st}</button>`).join('')}</div>
-      <button class="cta" data-act="nFinish" ${all ? '' : 'disabled'}>סיום טיפול ודיווח</button>
+      <div><div class="eyebrow">בביקור · משפחת כהן</div><h1 class="h1">${r.svc.name}</h1></div>
+      <div class="calm">${ico('lock', 16, 2.2)}<span>התיעוד הסיעודי נשאר אצלך, לפי הנוהל שלך. באפליקציה לא רושמים מידע רפואי.</span></div>
+      <button class="cta" data-act="nFinish">סיימתי את הביקור</button>
     </div>`;
   } else if (N.step === 'summary') {
     h = `<div class="stack">
-      <div style="text-align:center"><div class="done-badge">${ico('check', 32, 3)}</div><div class="eyebrow">הביקור הושלם</div><h1 class="h1">+₪${r.pay + r.tip}</h1><div class="muted small num">₪${r.pay} תשלום${r.tip ? ` + ₪${r.tip} טיפ` : ''} · ${r.p[0]} ${'★'.repeat(5)}</div></div>
+      <div style="text-align:center"><div class="done-badge">${ico('check', 32, 3)}</div><div class="eyebrow">הביקור הושלם</div><h1 class="h1 num">+${nis(r.net)}</h1><div class="muted small">נטו, אחרי עמלה. נכנס לארנק ויועבר לחשבון במועד ההעברה הבא.</div></div>
       ${kpis}
-      <div class="muted small">הדיווח נשלח לרופא המטפל ${r.svc.id === 'blood' ? 'והדגימות נרשמו למעבדה' : 'ולתיק הרפואי'}.</div>
       <button class="cta" data-act="nNext">חזרה לזמינות</button>
     </div>`;
   }
@@ -897,25 +943,33 @@ function renderNurse() {
 function queueRequest(ms) {
   later(() => {
     if (MODE !== 'nurse' || !N.online || N.step !== 'idle') return;
-    const svc = pick(SERVICES), p = pick(PATIENTS);
+    const svc = pick(SERVICES);
     let loc; do { loc = randLand(); } while (dist(loc, me.pos) < 500 || dist(loc, me.pos) > 1600);
-    N.req = { svc, p, loc, pay: Math.round(svc.price * .75), tip: pick([0, 10, 20, 20, 30]), note: pick(['', '', 'יש הפניה חתומה מרופא המשפחה', 'בן המשפחה יפתח את הדלת', 'בבקשה להתקשר לפני העלייה']) };
-    N.step = 'incoming'; N.left = 15;
+    N.req = { svc, loc, area: pick(AREAS), pet: Math.random() < .4, lift: Math.random() < .6, net: svc.price - Math.round(svc.price * COMMISSION) };
+    N.step = 'incoming'; N.left = OFFER_SECS; N.called = false;
     N.pm.setLatLng(uv2ll(loc)).addTo(map);
     fit([uv2ll(me.pos), uv2ll(loc)], 16);
     renderNurse();
+    // demo runs the 2-minute window at 6x speed
     every(() => {
       if (N.step !== 'incoming') return;
-      N.left -= .1;
+      N.left -= .6;
       const c = document.getElementById('ringC'), n = document.getElementById('ringN');
-      if (c) { c.setAttribute('stroke-dashoffset', 169.6 * (1 - Math.max(0, N.left) / 15)); n.textContent = Math.max(0, Math.ceil(N.left)); }
-      if (N.left <= 0) declineReq('לא נענתה בזמן, הקריאה הועברה הלאה');
+      const L2 = Math.max(0, N.left);
+      if (c) { c.setAttribute('stroke-dashoffset', 169.6 * (1 - L2 / OFFER_SECS)); n.textContent = Math.floor(L2 / 60) + ':' + String(Math.floor(L2 % 60)).padStart(2, '0'); }
+      if (N.left <= 0) declineReq('ההצעה נסגרה');
     }, 100);
   }, ms);
 }
 function declineReq(msg) { clearTimers(); map.removeLayer(N.pm); N.req = null; N.step = 'idle'; toast(msg); renderNurse(); queueRequest(4500); }
 function acceptReq() {
   clearTimers();
+  toast('אישרת. בודקים מי עוד אישרה…');
+  N.step = 'waiting';
+  sheet.innerHTML = `<div class="stack" style="text-align:center"><div class="radar calm-radar"><span class="core">${ico('clock', 22)}</span></div><h1 class="h1">אישרת את ההצעה</h1><div class="muted small">ההחלטה מתקבלת תוך חצי דקה, לפי התאמה ולא לפי מהירות.</div></div>`;
+  later(() => { toast('נבחרת! (ניסיון בטיפול הזה ומרחק)'); N.step = 'call'; renderNurse(); }, 2600);
+}
+function startDrive() {
   N.step = 'enroute';
   me.path = mkPath(route(me.pos, N.req.loc)); me.speed = Math.max(me.path.total / 26, 12); me.mode = 'enroute';
   me.onArrive = () => { toast('הגעת ליעד'); document.getElementById('navbar').hidden = true; const b = document.getElementById('nArrBtn'); if (b) b.disabled = false; };
@@ -939,11 +993,9 @@ function updateNav() {
   aEl.innerHTML = ico(cross > 0 ? 'left' : 'right', 24);
 }
 function finishNurseVisit() {
-  const r = N.req; N.earn += r.pay + r.tip; N.visits++; N.step = 'summary';
-  renderNurse(); toast('הטיפול תועד ונשלח');
+  const r = N.req; N.earn += r.net; N.visits++; N.step = 'summary';
+  renderNurse(); toast('הביקור הסתיים. המשפחה קיבלה קבלה.');
 }
-
-/* ================= mode switch ================= */
 function recenter() {
   if (MODE === 'patient') {
     if (P.step === 'home' || P.step === 'details') placeAt(uv2ll(P.loc), 15.5);
@@ -980,5 +1032,3 @@ document.getElementById('modeN').onclick = () => setMode('nurse');
 goHome();
 })();
 </script>
-
-</body></html>
