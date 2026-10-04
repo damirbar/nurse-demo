@@ -1,3 +1,8 @@
+<!doctype html>
+<html lang="he" dir="rtl"><head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#1662F5">
 <title>אחות בדרך</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -54,13 +59,13 @@
 }
 
 [hidden]{display:none!important}
-html,body{height:100%}
+html,body{height:100%;margin:0;-webkit-text-size-adjust:100%;text-size-adjust:100%}
 body{background:var(--bg);color:var(--ink);font-family:"Rubik","Assistant","Segoe UI",Arial,sans-serif;font-size:15px;line-height:1.45}
 *{box-sizing:border-box}
 button{font:inherit;color:inherit}
 :focus-visible{outline:3px solid color-mix(in srgb,var(--brand) 55%,transparent);outline-offset:2px}
 
-#app{position:relative;height:100%;overflow:hidden}
+#app{position:relative;height:100%;height:100dvh;overflow:hidden}
 #map{position:absolute;inset:0;background:var(--map-land)}
 
 /* top bar */
@@ -254,6 +259,12 @@ textarea{width:100%;min-height:64px;resize:vertical;border:1.5px solid var(--lin
 #toast.show{opacity:1;transform:translate(-50%,0)}
 .demo-note{font-size:11px;color:var(--muted);text-align:center}
 @media (prefers-reduced-motion:reduce){*,*::before,*::after{animation:none!important;transition:none!important}}
+/* iPhone fixes */
+button,input{touch-action:manipulation}
+.field{font-size:16px}
+.brand b{white-space:nowrap}
+.topbar{top:calc(10px + env(safe-area-inset-top,0px))}
+@media (max-width:430px){.brand small{display:none}.seg button{padding-inline:10px;font-size:13px}}
 /* v2 additions */
 .nm.anon{width:14px;height:14px;background:var(--muted);border:2px solid #fff;opacity:.75;box-shadow:0 1px 4px rgba(0,0,0,.25)}
 .nm.anon.dim{opacity:.3}
@@ -273,6 +284,7 @@ textarea{width:100%;min-height:64px;resize:vertical;border:1.5px solid var(--lin
 .otp span{width:46px;height:54px;border-radius:12px;border:1.5px solid var(--line);background:var(--surface-2);display:grid;place-items:center;font-size:22px;font-weight:700}
 .calm-radar span:not(.core){display:none}
 </style>
+</head><body>
 <div id="app" dir="rtl" lang="he">
   <div id="map" dir="ltr" aria-label="מפה"></div>
 
@@ -1032,3 +1044,4 @@ document.getElementById('modeN').onclick = () => setMode('nurse');
 goHome();
 })();
 </script>
+</body></html>
