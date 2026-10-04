@@ -1,0 +1,984 @@
+<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#faf9f5;color:#141413}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
+<title>אחות בדרך</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Rubik:wght@400;500;600;700&display=swap">
+<style>
+/* --- Leaflet 1.9.4 core styles (inlined) --- */
+.leaflet-pane,.leaflet-tile,.leaflet-marker-icon,.leaflet-marker-shadow,.leaflet-tile-container,.leaflet-pane>svg,.leaflet-pane>canvas,.leaflet-zoom-box,.leaflet-image-layer,.leaflet-layer{position:absolute;left:0;top:0}
+.leaflet-container{overflow:hidden;-webkit-tap-highlight-color:transparent;outline-offset:1px;font-size:12px}
+.leaflet-tile,.leaflet-marker-icon,.leaflet-marker-shadow{-webkit-user-select:none;user-select:none;-webkit-user-drag:none}
+.leaflet-container .leaflet-tile-pane img,.leaflet-container img.leaflet-tile{max-width:none!important;max-height:none!important;width:auto;padding:0}
+.leaflet-tile{filter:inherit;visibility:hidden}.leaflet-tile-loaded{visibility:inherit}
+.leaflet-zoom-box{width:0;height:0;box-sizing:border-box;z-index:800}
+.leaflet-pane{z-index:400}.leaflet-tile-pane{z-index:200}.leaflet-overlay-pane{z-index:400}.leaflet-shadow-pane{z-index:500}.leaflet-marker-pane{z-index:600}.leaflet-tooltip-pane{z-index:650}.leaflet-popup-pane{z-index:700}
+.leaflet-map-pane canvas{z-index:100}.leaflet-map-pane svg{z-index:200}
+.leaflet-control{position:relative;z-index:800;pointer-events:auto;float:left;clear:both}
+.leaflet-top,.leaflet-bottom{position:absolute;z-index:1000;pointer-events:none}
+.leaflet-top{top:0}.leaflet-right{right:0}.leaflet-bottom{bottom:0}.leaflet-left{left:0}
+.leaflet-right .leaflet-control{float:right}.leaflet-bottom .leaflet-control{margin-bottom:0}.leaflet-left .leaflet-control{margin-left:0}
+.leaflet-zoom-animated{transform-origin:0 0}
+.leaflet-zoom-anim .leaflet-zoom-animated{transition:transform .25s cubic-bezier(0,0,.25,1)}
+.leaflet-zoom-anim .leaflet-tile,.leaflet-pan-anim .leaflet-tile{transition:none}
+.leaflet-zoom-anim .leaflet-zoom-hide{visibility:hidden}
+.leaflet-interactive{cursor:pointer}.leaflet-grab{cursor:grab}.leaflet-dragging .leaflet-grab{cursor:grabbing}
+.leaflet-marker-icon,.leaflet-marker-shadow,.leaflet-image-layer,.leaflet-pane>svg path,.leaflet-tile-container{pointer-events:none}
+.leaflet-marker-icon.leaflet-interactive,.leaflet-pane>svg path.leaflet-interactive{pointer-events:auto}
+.leaflet-bottom{bottom:var(--sheet-h,0px)}
+.leaflet-control-attribution{background:color-mix(in srgb,var(--surface) 80%,transparent);padding:0 6px;color:var(--muted);font-size:10px;direction:ltr}
+.leaflet-control-attribution a{color:inherit}
+
+/* --- Tokens --- */
+:root{
+  --bg:#F3F6FB; --surface:#FFFFFF; --surface-2:#F4F7FC; --ink:#14213D; --muted:#5E6B85; --line:#E3E8F2;
+  --brand:#1662F5; --brand-ink:#FFFFFF; --brand-soft:#E7EEFF; --brand-2:#0B4FD6;
+  --ok:#12A150; --ok-soft:#E2F6E9; --amber:#E08A00; --amber-soft:#FFF3DC; --danger:#E5484D; --danger-soft:#FDECEC;
+  --map-land:#F1F3EE; --map-street:#FFFFFF; --map-main:#FFD98A; --map-sea:#A9D8F2; --map-park:#C6EAB9; --map-bldg:#E4E6E1; --map-sand:#F6EACB;
+  --shadow:0 12px 32px rgba(20,33,61,.14),0 2px 6px rgba(20,33,61,.06);
+  --shadow-sm:0 2px 8px rgba(20,33,61,.08);
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  color-scheme:dark;
+  --bg:#0C1220; --surface:#151D2E; --surface-2:#1C2638; --ink:#EAF0FA; --muted:#9AA7BE; --line:#2A3548;
+  --brand:#5B93FF; --brand-ink:#0A1022; --brand-soft:#1B2B4D; --brand-2:#7FAAFF;
+  --ok:#3DD68C; --ok-soft:#173424; --amber:#FBBF24; --amber-soft:#3A2E12; --danger:#FF6B6F; --danger-soft:#3A1C20;
+  --map-land:#141B26; --map-street:#243044; --map-main:#4B4430; --map-sea:#0F2338; --map-park:#17301F; --map-bldg:#1B2331; --map-sand:#2A2A20;
+  --shadow:0 12px 32px rgba(0,0,0,.5),0 2px 6px rgba(0,0,0,.3); --shadow-sm:0 2px 8px rgba(0,0,0,.35);
+}}
+:root[data-theme="dark"]{
+  color-scheme:dark;
+  --bg:#0C1220; --surface:#151D2E; --surface-2:#1C2638; --ink:#EAF0FA; --muted:#9AA7BE; --line:#2A3548;
+  --brand:#5B93FF; --brand-ink:#0A1022; --brand-soft:#1B2B4D; --brand-2:#7FAAFF;
+  --ok:#3DD68C; --ok-soft:#173424; --amber:#FBBF24; --amber-soft:#3A2E12; --danger:#FF6B6F; --danger-soft:#3A1C20;
+  --map-land:#141B26; --map-street:#243044; --map-main:#4B4430; --map-sea:#0F2338; --map-park:#17301F; --map-bldg:#1B2331; --map-sand:#2A2A20;
+  --shadow:0 12px 32px rgba(0,0,0,.5),0 2px 6px rgba(0,0,0,.3); --shadow-sm:0 2px 8px rgba(0,0,0,.35);
+}
+
+[hidden]{display:none!important}
+html,body{height:100%}
+body{background:var(--bg);color:var(--ink);font-family:"Rubik","Assistant","Segoe UI",Arial,sans-serif;font-size:15px;line-height:1.45}
+*{box-sizing:border-box}
+button{font:inherit;color:inherit}
+:focus-visible{outline:3px solid color-mix(in srgb,var(--brand) 55%,transparent);outline-offset:2px}
+
+#app{position:relative;height:100%;overflow:hidden}
+#map{position:absolute;inset:0;background:var(--map-land)}
+
+/* top bar */
+.topbar{position:absolute;top:12px;inset-inline:12px;z-index:1100;display:flex;justify-content:space-between;align-items:center;gap:8px;pointer-events:none}
+.topbar>*{pointer-events:auto}
+.brand{display:flex;align-items:center;gap:10px;background:var(--surface);border-radius:999px;padding:6px 16px 6px 6px;box-shadow:var(--shadow)}
+.brand-mark{width:34px;height:34px;border-radius:50%;background:var(--brand);display:grid;place-items:center;color:var(--brand-ink);box-shadow:0 4px 10px color-mix(in srgb,var(--brand) 40%,transparent)}
+.brand b{font-weight:700;font-size:16px}
+.brand small{display:block;color:var(--muted);font-size:11px;margin-top:-2px}
+.seg{display:flex;background:var(--surface);border-radius:999px;padding:4px;box-shadow:var(--shadow)}
+.seg button{border:0;background:none;padding:8px 14px;border-radius:999px;cursor:pointer;font-weight:500;font-size:13px;color:var(--muted);white-space:nowrap}
+.seg button[aria-pressed="true"]{background:var(--brand);color:var(--brand-ink);font-weight:700}
+
+.map-ctrls{position:absolute;bottom:calc(var(--sheet-h,0px) + 12px);inset-inline-end:12px;z-index:1050;display:flex;flex-direction:column;gap:8px}
+.map-ctrls button{width:42px;height:42px;border-radius:50%;border:0;background:var(--surface);box-shadow:var(--shadow);cursor:pointer;display:grid;place-items:center;color:var(--ink)}
+
+.navbar{position:absolute;top:68px;inset-inline:12px;z-index:1060;background:var(--brand);color:var(--brand-ink);border-radius:20px;padding:12px 14px;display:flex;gap:12px;align-items:center;box-shadow:var(--shadow);max-width:520px}
+.navbar .arrow{width:44px;height:44px;border-radius:14px;background:color-mix(in srgb,var(--brand-ink) 18%,transparent);display:grid;place-items:center;flex:none}
+.navbar b{font-size:22px;display:block;line-height:1.1}
+.navbar span{font-size:14px;opacity:.92}
+
+#centerPin{position:absolute;z-index:1040;transform:translate(-50%,-100%);pointer-events:none;transition:transform .15s}
+#centerPin.lift{transform:translate(-50%,-114%)}
+#centerPin .pt{margin-bottom:7px}
+#centerPin .lbl{position:absolute;bottom:100%;left:50%;transform:translateX(-50%);margin-bottom:8px;background:var(--ink);color:var(--bg);font-size:12px;font-weight:500;border-radius:999px;padding:5px 11px;white-space:nowrap;box-shadow:var(--shadow-sm)}
+
+/* sheet */
+.sheet{position:absolute;z-index:1080;inset-inline:0;bottom:0;max-height:64%;overflow:auto;background:var(--surface);border-radius:28px 28px 0 0;box-shadow:var(--shadow);padding:10px 16px calc(18px + env(safe-area-inset-bottom,0px));overscroll-behavior:contain}
+.sheet::before{content:"";display:block;width:44px;height:5px;border-radius:5px;background:var(--line);margin:0 auto 12px}
+@media (min-width:860px){
+  .sheet{top:80px;bottom:auto;inset-inline-start:16px;inset-inline-end:auto;width:420px;max-height:calc(100% - 96px);border-radius:26px;padding:22px}
+  .sheet::before{display:none}
+  .navbar{inset-inline-start:456px}
+}
+.stack{display:flex;flex-direction:column;gap:16px}
+.h1{font-weight:700;font-size:22px;line-height:1.2;margin:0;text-wrap:balance}
+.h2{font-weight:600;font-size:16px;margin:0}
+.muted{color:var(--muted)}
+.small{font-size:13px}
+.eyebrow{font-size:12px;font-weight:600;letter-spacing:.3px;color:var(--muted)}
+.num{font-variant-numeric:tabular-nums}
+.row{display:flex;align-items:center;gap:10px}
+.between{justify-content:space-between}
+.hr{height:1px;background:var(--line);border:0;margin:0}
+
+.greet{display:flex;flex-direction:column;gap:2px}
+.greet .eyebrow{color:var(--brand);font-size:13px}
+.trust{display:flex;gap:6px;flex-wrap:wrap}
+.trust span{display:inline-flex;align-items:center;gap:5px;font-size:12px;font-weight:500;padding:5px 10px;border-radius:999px;background:var(--surface-2);color:var(--ink)}
+.trust svg{color:var(--c,var(--brand))}
+
+.addr{display:flex;align-items:center;gap:12px;background:var(--surface-2);border-radius:18px;padding:12px 14px}
+.addr .dot{width:36px;height:36px;border-radius:50%;background:var(--brand-soft);color:var(--brand);display:grid;place-items:center;flex:none}
+.addr b{display:block;font-weight:600}
+.addr span{font-size:12px;color:var(--muted)}
+
+.svc-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.svc{--c:var(--brand);display:flex;flex-direction:column;gap:8px;align-items:flex-start;text-align:start;border:1.5px solid var(--line);background:var(--surface);border-radius:20px;padding:14px;cursor:pointer;transition:transform .15s,border-color .15s,box-shadow .15s}
+.svc:hover{border-color:var(--c);box-shadow:var(--shadow-sm);transform:translateY(-2px)}
+.svc:active{transform:scale(.98)}
+.ic{--c:var(--brand);width:46px;height:46px;border-radius:15px;background:color-mix(in srgb,var(--c) 15%,var(--surface));color:var(--c);display:grid;place-items:center;flex:none}
+.ic.lg{width:60px;height:60px;border-radius:19px}
+.svc b{font-weight:600;font-size:14.5px;line-height:1.25}
+.svc .meta{display:flex;justify-content:space-between;align-items:center;width:100%;font-size:12px;color:var(--muted);margin-top:auto}
+.svc .price{font-weight:700;font-size:15px;color:var(--ink)}
+
+.live{display:flex;align-items:center;gap:10px;font-size:13px;color:var(--ink);background:var(--ok-soft);border-radius:14px;padding:10px 12px}
+.live i{width:9px;height:9px;border-radius:50%;background:var(--ok);flex:none;animation:ping 1.8s infinite}
+@keyframes ping{0%{box-shadow:0 0 0 0 color-mix(in srgb,var(--ok) 60%,transparent)}100%{box-shadow:0 0 0 10px transparent}}
+
+.back{border:0;background:var(--surface-2);width:40px;height:40px;border-radius:50%;display:grid;place-items:center;cursor:pointer;flex:none}
+.chips{display:flex;flex-wrap:wrap;gap:8px}
+.chip{border:1.5px solid var(--line);background:var(--surface);border-radius:14px;padding:9px 14px;cursor:pointer;font-weight:500;font-size:14px;text-align:start}
+.chip small{display:block;font-weight:400;font-size:11px;color:var(--muted)}
+.chip[aria-pressed="true"]{border-color:var(--brand);background:var(--brand-soft);color:var(--ink);font-weight:600}
+.incl{margin:0;padding:0;list-style:none;display:grid;gap:8px;font-size:14px}
+.incl li{display:flex;gap:10px;align-items:flex-start}
+.incl svg{color:var(--ok);flex:none;margin-top:3px}
+textarea{width:100%;min-height:64px;resize:vertical;border:1.5px solid var(--line);background:var(--surface-2);color:var(--ink);border-radius:14px;padding:10px 12px;font:inherit;font-size:14px}
+.sum{display:grid;gap:7px;font-size:14px;background:var(--surface-2);border-radius:18px;padding:14px}
+.sum div{display:flex;justify-content:space-between;gap:10px}
+.sum .tot{font-weight:700;font-size:17px;padding-top:8px;border-top:1.5px dashed var(--line)}
+.sum .save{color:var(--ok);font-weight:500}
+
+.cta{display:flex;align-items:center;justify-content:center;gap:8px;width:100%;height:56px;border:0;border-radius:18px;background:var(--brand);color:var(--brand-ink);font-weight:700;font-size:17px;cursor:pointer;box-shadow:0 8px 20px color-mix(in srgb,var(--brand) 35%,transparent);transition:transform .1s,background .15s}
+.cta:hover{background:var(--brand-2)}
+.cta:active{transform:scale(.98)}
+.cta:disabled{opacity:.4;cursor:not-allowed;box-shadow:none}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:7px;height:48px;padding:0 14px;border:1.5px solid var(--line);border-radius:16px;background:var(--surface);cursor:pointer;font-weight:500;font-size:14px;flex:1}
+.btn:hover{background:var(--surface-2)}
+.btn.danger{color:var(--danger);border-color:transparent;background:var(--danger-soft)}
+.btns{display:flex;gap:8px}
+.stack>.btn{flex:none}
+
+/* searching */
+.radar{position:relative;height:110px;display:grid;place-items:center}
+.radar span{position:absolute;width:48px;height:48px;border-radius:50%;background:color-mix(in srgb,var(--c,var(--brand)) 25%,transparent);opacity:0;animation:radar 2.4s infinite}
+.radar span:nth-child(2){animation-delay:.8s}.radar span:nth-child(3){animation-delay:1.6s}
+.radar .core{position:relative;width:56px;height:56px;border-radius:50%;background:var(--c,var(--brand));color:#fff;display:grid;place-items:center;opacity:1;animation:none;box-shadow:0 8px 18px color-mix(in srgb,var(--c,var(--brand)) 40%,transparent)}
+@keyframes radar{0%{transform:scale(.8);opacity:.9}100%{transform:scale(2.8);opacity:0}}
+.reqs{list-style:none;margin:0;padding:0;display:grid;gap:8px}
+.reqs li{display:flex;align-items:center;gap:10px;padding:10px 12px;background:var(--surface-2);border-radius:16px}
+.pill{font-size:12px;font-weight:600;border-radius:999px;padding:4px 10px;background:var(--surface);color:var(--muted);white-space:nowrap}
+.pill.ok{background:var(--ok-soft);color:var(--ok)}
+.pill.no{background:var(--danger-soft);color:var(--danger)}
+.pill.see{background:var(--amber-soft);color:var(--amber)}
+.pill.blue{background:var(--brand-soft);color:var(--brand)}
+
+.av{--c:var(--brand);width:42px;height:42px;border-radius:50%;background:var(--c);color:#fff;display:grid;place-items:center;font-weight:700;font-size:15px;flex:none}
+.av.lg{width:62px;height:62px;font-size:21px;box-shadow:0 0 0 4px var(--surface),0 0 0 6px color-mix(in srgb,var(--c) 35%,transparent)}
+.grow{flex:1;min-width:0}
+.star{color:var(--amber)}
+
+.eta{display:flex;align-items:baseline;gap:8px}
+.eta b{font-size:40px;line-height:1;font-weight:700;color:var(--brand)}
+.ncard{display:flex;gap:14px;align-items:center;padding:14px;border-radius:20px;background:var(--surface-2)}
+.ncard .name{font-weight:700;font-size:17px}
+.tags{display:flex;flex-wrap:wrap;gap:6px}
+.tag{display:inline-flex;align-items:center;gap:4px;font-size:12px;border-radius:999px;padding:4px 10px;color:var(--ink);background:var(--surface-2)}
+.tag.v{color:var(--ok);background:var(--ok-soft);font-weight:600}
+.plate{font-weight:700;background:#FFD43B;color:#1b1b1b;border-radius:6px;padding:1px 7px;font-size:13px;direction:ltr;display:inline-block;border:1.5px solid #1b1b1b}
+
+.tl{list-style:none;margin:0;padding:0;display:grid}
+.tl li{display:flex;gap:12px;align-items:center;font-size:14px;color:var(--muted);position:relative;padding:6px 0}
+.tl li i{width:14px;height:14px;border-radius:50%;border:2.5px solid var(--line);background:var(--surface);flex:none;position:relative;z-index:1}
+.tl li:not(:last-child)::after{content:"";position:absolute;inset-inline-start:6px;top:22px;height:16px;width:2.5px;background:var(--line)}
+.tl li.done{color:var(--ink)}.tl li.done i{background:var(--ok);border-color:var(--ok)}
+.tl li.now{color:var(--ink);font-weight:600}.tl li.now i{border-color:var(--brand);box-shadow:0 0 0 5px var(--brand-soft)}
+
+.bar{height:10px;border-radius:10px;background:var(--surface-2);overflow:hidden}
+.bar i{display:block;height:100%;background:linear-gradient(90deg,var(--brand),var(--ok));border-radius:10px;transition:width .6s}
+.checks{list-style:none;margin:0;padding:0;display:grid;gap:8px}
+.checks li,.checks button{display:flex;gap:12px;align-items:center;font-size:14.5px;width:100%;text-align:start;padding:10px 12px;border-radius:16px;background:var(--surface-2);border:0}
+.checks button{cursor:pointer}
+.box{width:26px;height:26px;border-radius:50%;border:2.5px solid var(--line);display:grid;place-items:center;flex:none;color:transparent;background:var(--surface)}
+.checks .on .box{background:var(--ok);border-color:var(--ok);color:#fff}
+.checks .wait{color:var(--muted)}
+.checks .cur{background:var(--brand-soft);font-weight:600}
+.checks .cur .box{border-color:var(--brand)}
+
+.stars{display:flex;gap:6px;justify-content:center}
+.stars button{border:0;background:none;cursor:pointer;padding:2px;color:var(--line);transition:transform .1s}
+.stars button:hover{transform:scale(1.12)}
+.stars button.on{color:var(--amber)}
+.receipt{background:var(--surface-2);border-radius:18px;padding:14px;display:grid;gap:7px;font-size:14px}
+.receipt div{display:flex;justify-content:space-between;gap:10px}
+.done-badge{width:64px;height:64px;border-radius:50%;background:var(--ok);color:#fff;display:grid;place-items:center;margin:0 auto 8px;box-shadow:0 0 0 8px var(--ok-soft)}
+
+/* chat */
+.chatlog{display:flex;flex-direction:column;gap:6px;max-height:260px;overflow:auto;padding:4px 0}
+.msg{max-width:80%;padding:9px 13px;border-radius:18px;font-size:14px}
+.msg.me{align-self:flex-start;background:var(--brand);color:var(--brand-ink);border-end-start-radius:5px}
+.msg.them{align-self:flex-end;background:var(--surface-2);border-end-end-radius:5px}
+.msg.typing{color:var(--muted);font-style:italic}
+.chatform{display:flex;gap:8px}
+.chatform input{flex:1;min-width:0;height:48px;border:1.5px solid var(--line);border-radius:999px;background:var(--surface-2);color:var(--ink);padding:0 16px;font:inherit}
+.chatform button{width:48px;height:48px;border-radius:50%;border:0;background:var(--brand);color:var(--brand-ink);display:grid;place-items:center;cursor:pointer}
+
+/* nurse mode */
+.kpis{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.kpi{border-radius:16px;padding:12px;background:color-mix(in srgb,var(--c) 12%,var(--surface))}
+.kpi b{font-size:21px;display:block;color:var(--c)}
+.kpi span{font-size:12px;color:var(--muted)}
+.switch{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:14px;border-radius:18px;border:0;cursor:pointer;width:100%;background:var(--surface-2);text-align:start}
+.switch[aria-checked="true"]{background:var(--ok-soft)}
+.switch .tr{width:52px;height:30px;border-radius:999px;background:var(--line);position:relative;flex:none;transition:background .2s}
+.switch .tr::after{content:"";position:absolute;top:3px;inset-inline-start:3px;width:24px;height:24px;border-radius:50%;background:#fff;transition:inset-inline-start .2s;box-shadow:0 1px 3px rgba(0,0,0,.25)}
+.switch[aria-checked="true"] .tr{background:var(--ok)}
+.switch[aria-checked="true"] .tr::after{inset-inline-start:25px}
+.incoming{border-radius:22px;padding:16px;display:grid;gap:14px;background:var(--surface);box-shadow:0 0 0 2px var(--brand),var(--shadow-sm)}
+.ring{position:relative;width:64px;height:64px;flex:none}
+.ring svg{transform:rotate(-90deg)}
+.ring b{position:absolute;inset:0;display:grid;place-items:center;font-size:20px}
+.alert{background:var(--amber-soft);color:var(--ink);border-radius:14px;padding:10px 12px;font-size:13px;font-weight:500}
+.alert.bad{background:var(--danger-soft);color:var(--danger)}
+
+/* markers */
+.mk{background:none;border:0}
+.nm{--c:var(--brand);width:30px;height:30px;border-radius:50%;background:var(--c);border:2.5px solid #fff;display:grid;place-items:center;font:700 10px "Rubik",sans-serif;color:#fff;box-shadow:0 3px 8px rgba(0,0,0,.3);transition:opacity .3s,transform .3s,filter .3s;position:relative}
+.nm.dim{opacity:.35}
+.nm.req::before{content:"";position:absolute;inset:-6px;border-radius:50%;border:3px solid var(--amber);animation:radar 1.6s infinite}
+.nm.no{filter:grayscale(1);opacity:.5}
+.nm.assigned{transform:scale(1.35);box-shadow:0 0 0 4px color-mix(in srgb,var(--c) 35%,transparent),0 4px 10px rgba(0,0,0,.3)}
+.nm .tagl{position:absolute;bottom:118%;left:50%;transform:translateX(-50%) scale(.75);background:var(--ink);color:var(--bg);font:600 12px "Rubik",sans-serif;padding:3px 9px;border-radius:999px;white-space:nowrap;direction:rtl}
+.me{width:32px;height:32px;border-radius:50%;background:var(--brand);border:3px solid #fff;box-shadow:0 0 0 7px color-mix(in srgb,var(--brand) 25%,transparent),0 2px 6px rgba(0,0,0,.3);display:grid;place-items:center;color:#fff}
+.pt{width:36px;height:36px;border-radius:50% 50% 50% 0;transform:rotate(-45deg);background:var(--brand);display:grid;place-items:center;box-shadow:0 4px 10px rgba(0,0,0,.3);border:2.5px solid #fff}
+.pt i{width:12px;height:12px;border-radius:50%;background:#fff}
+.pt.red{background:var(--danger)}
+
+#toast{position:absolute;left:50%;top:72px;transform:translate(-50%,-20px);z-index:1200;background:var(--ink);color:var(--bg);padding:11px 18px;border-radius:999px;font-weight:500;font-size:14px;opacity:0;transition:.25s;pointer-events:none;max-width:calc(100% - 32px);text-align:center;box-shadow:var(--shadow)}
+#toast.show{opacity:1;transform:translate(-50%,0)}
+.demo-note{font-size:11px;color:var(--muted);text-align:center}
+@media (prefers-reduced-motion:reduce){*,*::before,*::after{animation:none!important;transition:none!important}}
+</style>
+
+<div id="app" dir="rtl" lang="he">
+  <div id="map" dir="ltr" aria-label="מפה"></div>
+
+  <header class="topbar">
+    <div class="brand">
+      <div class="brand-mark"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg></div>
+      <div><b>אחות בדרך</b><small>אחות עד הבית, תוך דקות</small></div>
+    </div>
+    <div class="seg" role="group" aria-label="מצב">
+      <button id="modeP" aria-pressed="true">מטופל/ת</button>
+      <button id="modeN" aria-pressed="false">אחות</button>
+    </div>
+  </header>
+
+  <div class="map-ctrls">
+    <button id="zin" aria-label="התקרבות"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg></button>
+    <button id="zout" aria-label="התרחקות"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M5 12h14"/></svg></button>
+    <button id="recenter" aria-label="מרכוז"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><circle cx="12" cy="12" r="7"/><circle cx="12" cy="12" r="2.5" fill="currentColor"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3"/></svg></button>
+  </div>
+
+  <div class="navbar" id="navbar" hidden>
+    <div class="arrow" id="navArrow"></div>
+    <div><b id="navDist">200 מ׳</b><span id="navText">פני ימינה</span></div>
+  </div>
+
+  <div id="centerPin" hidden>
+    <div class="lbl" id="pinLbl">הכתובת לביקור</div>
+    <div class="pt"><i></i></div>
+  </div>
+
+  <section class="sheet" id="sheet" aria-live="polite"></section>
+  <div id="toast" role="status"></div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.js"></script>
+<script>
+(() => {
+/* ================= geometry: a local "street grid" frame (u = along the coast, v = inland) ================= */
+const DEG = Math.PI / 180, SN = Math.sin(20 * DEG), CS = Math.cos(20 * DEG);
+const CENTER = [32.0795, 34.7810];               // Tel Aviv, around Ibn Gabirol
+const MLAT = 111320, MLNG = 111320 * Math.cos(CENTER[0] * DEG);
+const BU = 160, BV = 110;                         // block size in metres
+const ll2xy = (lat, lng) => ({ x: (lng - CENTER[1]) * MLNG, y: (lat - CENTER[0]) * MLAT });
+const xy2ll = (x, y) => [CENTER[0] + y / MLAT, CENTER[1] + x / MLNG];
+const xy2uv = (x, y) => ({ u: x * SN + y * CS, v: x * CS - y * SN });
+const uv2xy = (u, v) => ({ x: u * SN + v * CS, y: u * CS - v * SN });
+const uv2ll = p => { const q = uv2xy(p.u, p.v); return xy2ll(q.x, q.y); };
+const ll2uv = ll => { const q = ll2xy(ll.lat, ll.lng); return xy2uv(q.x, q.y); };
+const coast = u => -1180 + 35 * Math.sin(u / 260) + 20 * Math.sin(u / 97);
+const PARK = [1900, 2250];
+const rnd = (a, b) => a + Math.random() * (b - a);
+const pick = a => a[Math.floor(Math.random() * a.length)];
+const dist = (a, b) => Math.hypot(a.u - b.u, a.v - b.v);
+const clampLand = p => ({ u: Math.max(-2400, Math.min(1700, p.u)), v: Math.max(-900, Math.min(1500, p.v)) });
+const randLand = () => ({ u: rnd(-2000, 1500), v: rnd(-800, 1300) });
+const snapU = u => Math.round(u / BU) * BU, snapV = v => Math.round(v / BV) * BV;
+function hash(i, j) { let h = (Math.imul(i, 374761393) + Math.imul(j, 668265263)) | 0; h = Math.imul(h ^ (h >>> 13), 1274126177); return (h ^ (h >>> 16)) >>> 0; }
+
+function route(a, b) {
+  const vs = snapV(a.v), us = snapU(b.u);
+  const raw = [a, { u: a.u, v: vs }, { u: us, v: vs }, { u: us, v: b.v }, b], pts = [];
+  for (const p of raw) { const l = pts[pts.length - 1]; if (!l || dist(l, p) > 1) pts.push({ u: p.u, v: p.v }); }
+  return pts;
+}
+function mkPath(pts) { const cum = [0]; for (let i = 1; i < pts.length; i++) cum.push(cum[i - 1] + dist(pts[i - 1], pts[i])); return { pts, cum, total: cum[cum.length - 1], d: 0 }; }
+function at(path, d) {
+  d = Math.max(0, Math.min(path.total, d));
+  let i = 1; while (i < path.cum.length - 1 && path.cum[i] < d) i++;
+  const seg = (path.cum[i] - path.cum[i - 1]) || 1, t = (d - path.cum[i - 1]) / seg, a = path.pts[i - 1], b = path.pts[i];
+  return { u: a.u + (b.u - a.u) * t, v: a.v + (b.v - a.v) * t, i };
+}
+
+const NS = ['הירקון', 'בן יהודה', 'דיזנגוף', 'המלך ג׳ורג׳', 'שינקין', 'אבן גבירול', 'לאונרדו דה וינצ׳י', 'ויצמן', 'נמיר', 'פנקס', 'בלוך', 'שלמה המלך'];
+const EW = ['פרישמן', 'גורדון', 'ארלוזורוב', 'נורדאו', 'בוגרשוב', 'אלנבי', 'מסדה', 'שלום עליכם', 'יהודה הלוי', 'רוטשילד', 'ביאליק', 'בלפור', 'ז׳בוטינסקי', 'קרליבך'];
+const mod = (a, n) => ((a % n) + n) % n;
+const nsName = v => NS[mod(Math.round(v / BV) + 3, NS.length)];
+const ewName = u => EW[mod(Math.round(u / BU) + 5, EW.length)];
+const address = p => `${nsName(p.v)} ${Math.max(2, Math.round((p.u + 2600) / 14))}`;
+
+/* ================= data ================= */
+const IC = {
+  drop: '<path d="M12 3c3 4.5 6 7.6 6 11a6 6 0 0 1-12 0c0-3.4 3-6.5 6-11z"/><path d="M9.5 14.5a2.5 2.5 0 0 0 2.5 2.5"/>',
+  bandage: '<rect x="2.5" y="8.5" width="19" height="7" rx="3.5" transform="rotate(-45 12 12)"/><path d="M10.6 10.6h.01M13.4 13.4h.01M10.6 13.4h.01M13.4 10.6h.01"/>',
+  syringe: '<path d="m18 2 4 4M17 7l3-3M19 9 9 19H5v-4L15 5zM9 11l2 2M12 8l2 2"/>',
+  iv: '<path d="M7 3h10v8a5 5 0 0 1-10 0zM12 16v5M7 7h5M7 10h3"/>',
+  scissors: '<circle cx="6" cy="6" r="3"/><circle cx="6" cy="18" r="3"/><path d="M20 4 8.1 15.9M14.5 14.5 20 20M8.1 8.1 12 12"/>',
+  pulse: '<path d="M3 12h4l2-5 4 10 2-5h6"/>',
+  cath: '<path d="M6 3v6a6 6 0 0 0 12 0V3M12 15v3a3 3 0 0 0 3 3h3"/>',
+  bed: '<path d="M3 19V6M3 14h18v5M21 14a3 3 0 0 0-3-3h-7v3"/><circle cx="7" cy="11" r="1.6"/>',
+  check: '<path d="m5 12 5 5 9-10"/>',
+  star: '<path d="m12 3 2.7 5.6 6.1.8-4.5 4.2 1.1 6.1L12 16.8 6.6 19.7l1.1-6.1L3.2 9.4l6.1-.8z" fill="currentColor" stroke="none"/>',
+  chat: '<path d="M4 5h16v11H9l-5 4z"/>',
+  phone: '<path d="M5 3h4l2 5-3 2a11 11 0 0 0 6 6l2-3 5 2v4a2 2 0 0 1-2 2A17 17 0 0 1 3 5a2 2 0 0 1 2-2z"/>',
+  back: '<path d="m9 6 6 6-6 6"/>',
+  send: '<path d="M20 4 3 11l7 2 2 7z"/>',
+  shield: '<path d="M12 3 5 6v6c0 4 3 7.5 7 9 4-1.5 7-5 7-9V6z"/><path d="m9 12 2 2 4-4"/>',
+  clock: '<circle cx="12" cy="12" r="8.5"/><path d="M12 7.5V12l3 2"/>',
+  right: '<path d="M5 18v-6a4 4 0 0 1 4-4h10M15 4l4 4-4 4"/>',
+  left: '<path d="M19 18v-6a4 4 0 0 0-4-4H5M9 4 5 8l4 4"/>',
+  up: '<path d="M12 20V5M6 11l6-6 6 6"/>',
+  flag: '<path d="M5 21V4h11l-2 4 2 4H5"/>',
+  cross: '<path d="M12 5v14M5 12h14"/>',
+  pin: '<path d="M12 21s-7-6.2-7-11.5A7 7 0 0 1 19 9.5C19 14.8 12 21 12 21z"/><circle cx="12" cy="9.5" r="2.5"/>',
+};
+const ico = (n, s = 20, w = 2) => `<svg width="${s}" height="${s}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="${w}" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${IC[n]}</svg>`;
+
+const SERVICES = [
+  { id: 'blood', c: '#E5484D', name: 'בדיקת דם בבית', short: 'בדיקת דם', price: 180, mins: 15, icon: 'drop', desc: 'דגימה לפי הפניה מהרופא, כולל שינוע למעבדת הקופה.', incl: ['עד 6 מבחנות', 'שינוע בקירור למעבדה', 'תוצאות באפליקציית הקופה תוך 24–48 שעות'], steps: ['אימות זהות והפניה', 'חיטוי והנחת חוסם ורידי', 'דגימה – 4 מבחנות', 'תיוג, קירור ושליחה למעבדה'] },
+  { id: 'wound', c: '#F2811D', name: 'חבישה וטיפול בפצע', short: 'חבישה', price: 160, mins: 25, icon: 'bandage', desc: 'ניקוי, הערכת פצע והחלפת חבישה. כולל פצעי לחץ ופצעי ניתוח.', incl: ['חומרי חבישה סטריליים', 'תיעוד מצב הפצע בתמונה', 'המלצה להמשך טיפול'], steps: ['הסרת החבישה הישנה', 'שטיפה וחיטוי', 'הערכת הפצע ותיעוד', 'חבישה חדשה וקיבוע'] },
+  { id: 'inj', c: '#8E4EC6', name: 'זריקה', short: 'זריקה', price: 120, mins: 10, icon: 'syringe', desc: 'תת-עורית או תוך-שרירית: קלקסן, B12, חיסונים. לפי מרשם.', incl: ['מזרק ומחט חד-פעמיים', 'פינוי פסולת רפואית', 'השגחה 5 דקות אחרי'], steps: ['בדיקת מרשם ותרופה', 'חיטוי אזור ההזרקה', 'מתן הזריקה', 'השגחה 5 דקות'] },
+  { id: 'iv', c: '#0EA5E9', name: 'עירוי לווריד', short: 'עירוי IV', price: 350, mins: 60, icon: 'iv', desc: 'נוזלים או אנטיביוטיקה לפי הוראת רופא, כולל הנחת ונפלון.', incl: ['ונפלון וסט עירוי', 'ניטור לאורך העירוי', 'דיווח לרופא המטפל'], steps: ['בדיקת הוראת רופא', 'הנחת ונפלון', 'חיבור עירוי וכיוון קצב', 'ניטור והוצאת ונפלון'] },
+  { id: 'stitch', c: '#D6409F', name: 'הוצאת תפרים או סיכות', short: 'הוצאת תפרים', price: 150, mins: 15, icon: 'scissors', desc: 'לפי הנחיית המנתח, בדרך כלל 7–14 ימים אחרי ניתוח.', incl: ['ערכה סטרילית', 'סטריפים לפי הצורך'], steps: ['בדיקת הצלקת', 'חיטוי', 'הוצאת התפרים', 'סטריפים וחבישה'] },
+  { id: 'vitals', c: '#12A150', name: 'לחץ דם, סוכר וסטורציה', short: 'מדדים', price: 100, mins: 10, icon: 'pulse', desc: 'בדיקה שגרתית או מעקב אחרי שינוי בתרופות.', incl: ['לחץ דם, דופק וחום', 'סוכר בדם וסטורציה', 'דוח PDF לרופא המשפחה'], steps: ['לחץ דם ודופק', 'סטורציה וחום', 'בדיקת סוכר', 'שליחת דוח לרופא'] },
+  { id: 'cath', c: '#C27C0E', name: 'החלפת קטטר שתן', short: 'קטטר', price: 260, mins: 30, icon: 'cath', desc: 'החלפה סטרילית של קטטר קבוע, כולל שקית איסוף.', incl: ['קטטר ושקית איסוף', 'ערכה סטרילית'], steps: ['הכנת שדה סטרילי', 'הוצאת הקטטר הקיים', 'החדרת קטטר חדש', 'בדיקת ניקוז ותיעוד'] },
+  { id: 'postop', c: '#3E63DD', name: 'ליווי אחרי ניתוח', short: 'אחרי ניתוח', price: 220, mins: 60, icon: 'bed', desc: 'שעת השגחה בבית: כאב, נקזים, תרופות ומדדים.', incl: ['בדיקת נקזים וחבישות', 'הדרכת בני המשפחה', 'דיווח למחלקה המנתחת'], steps: ['מדדים והערכת כאב', 'בדיקת נקזים', 'סידור תרופות', 'הדרכת בני המשפחה'] },
+];
+const FUNDS = [['clalit', 'כללית'], ['maccabi', 'מכבי'], ['meuhedet', 'מאוחדת'], ['leumit', 'לאומית'], ['private', 'פרטי']];
+const WHEN = [['now', 'עכשיו', 'אחות תגיע תוך דקות'], ['today', 'היום', '18:00–20:00'], ['tomorrow', 'מחר', '08:00–10:00']];
+
+const NURSE_DATA = [
+  ['נועה לוי', 1, 4.97, 1284, 9, 'קטנוע', '82-114-51', 'עברית, אנגלית', 'פצעים וסטומה'],
+  ['מרים אבו-ריא', 1, 4.93, 862, 12, 'טויוטה יאריס לבנה', '45-872-33', 'עברית, ערבית', 'גריאטריה'],
+  ['דנה כהן', 1, 4.90, 411, 5, 'קטנוע', '71-203-19', 'עברית', 'ילדים'],
+  ['אולגה פטרוב', 1, 4.95, 1570, 17, 'קיה פיקנטו כסופה', '13-590-62', 'עברית, רוסית', 'עירויים'],
+  ['יוסי מזרחי', 0, 4.88, 340, 4, 'קטנוע', '59-730-44', 'עברית, אנגלית', 'טיפול נמרץ'],
+  ['שירן ביטון', 1, 4.96, 990, 8, 'קטנוע', '66-481-07', 'עברית, צרפתית', 'אונקולוגיה'],
+  ['סאמר ח׳טיב', 0, 4.91, 705, 10, 'יונדאי i20 אפורה', '38-126-84', 'עברית, ערבית, אנגלית', 'רפואה דחופה'],
+  ['טל אברהם', 1, 4.89, 233, 3, 'קטנוע', '90-357-26', 'עברית', 'יולדות ותינוקות'],
+  ['רונית שפירא', 1, 4.98, 2104, 22, 'מאזדה 2 כחולה', '27-664-10', 'עברית, אנגלית', 'סוכרת'],
+  ['אביגיל טסמה', 1, 4.94, 518, 6, 'קטנוע', '84-219-73', 'עברית, אמהרית', 'גריאטריה'],
+  ['מיכאל רוזן', 0, 4.87, 187, 2, 'סקודה פאביה לבנה', '52-908-36', 'עברית, אנגלית', 'אורתופדיה'],
+];
+const PAL = ['#E5484D', '#F2811D', '#8E4EC6', '#0EA5E9', '#12A150', '#D6409F', '#3E63DD', '#12A594', '#C27C0E', '#E54666', '#0090FF'];
+const initials = n => n.split(' ').map(w => w[0]).slice(0, 2).join('');
+const PATIENTS = [['רחל גבאי', 78, 'סוכרת סוג 2, אלרגיה לפניצילין'], ['משה אלון', 65, 'אחרי החלפת ברך, נוטל קומדין'], ['אביטל כץ', 34, 'שבוע אחרי ניתוח קיסרי'], ['יוסף נסים', 82, 'מרותק למיטה, בן משפחה בבית'], ['מאיה רוזן', 29, 'ללא רקע רפואי'], ['שמעון דהן', 71, 'יתר לחץ דם, קוצב לב']];
+
+/* ================= map ================= */
+const mapEl = document.getElementById('map'), sheet = document.getElementById('sheet'), pinEl = document.getElementById('centerPin');
+const map = L.map(mapEl, { zoomControl: false, attributionControl: true, zoomSnap: 0.5, minZoom: 12, maxZoom: 18 }).setView(CENTER, 15);
+map.attributionControl.setPrefix(false).setPosition('bottomleft');
+const css = n => getComputedStyle(document.documentElement).getPropertyValue(n).trim();
+
+const ProcLayer = L.GridLayer.extend({
+  createTile(coords) {
+    const size = this.getTileSize(), r = (window.devicePixelRatio || 1) > 1 ? 2 : 1;
+    const t = document.createElement('canvas'); t.width = size.x * r; t.height = size.y * r;
+    const ctx = t.getContext('2d'), z = coords.z, nwP = coords.scaleBy(size);
+    const nw = this._map.unproject(nwP, z), se = this._map.unproject(nwP.add(size), z);
+    const A = ll2xy(nw.lat, nw.lng), B = ll2xy(se.lat, se.lng);
+    const sx = size.x * r / (B.x - A.x), sy = size.y * r / (A.y - B.y), mpp = 1 / sx;
+    ctx.setTransform(sx, 0, 0, -sy, -A.x * sx, A.y * sy);
+    const C = { land: css('--map-land'), street: css('--map-street'), main: css('--map-main'), sea: css('--map-sea'), park: css('--map-park'), bldg: css('--map-bldg'), sand: css('--map-sand') };
+    const corners = [[A.x, A.y], [B.x, A.y], [A.x, B.y], [B.x, B.y]].map(([x, y]) => xy2uv(x, y));
+    const umin = Math.min(...corners.map(c => c.u)) - 40, umax = Math.max(...corners.map(c => c.u)) + 40;
+    const vmin = Math.min(...corners.map(c => c.v)) - 40, vmax = Math.max(...corners.map(c => c.v)) + 40;
+    const poly = (pts, fill) => { ctx.beginPath(); pts.forEach((p, k) => { const q = uv2xy(p.u, p.v); k ? ctx.lineTo(q.x, q.y) : ctx.moveTo(q.x, q.y); }); ctx.closePath(); ctx.fillStyle = fill; ctx.fill(); };
+    const line = (a, b) => { const p = uv2xy(a.u, a.v), q = uv2xy(b.u, b.v); ctx.moveTo(p.x, p.y); ctx.lineTo(q.x, q.y); };
+    ctx.fillStyle = C.land; ctx.fillRect(A.x, B.y, B.x - A.x, A.y - B.y);
+    // beach
+    if (vmin < coast(umin) + 120) {
+      const pts = []; for (let u = umin; u <= umax + 40; u += 40) pts.push({ u, v: coast(u) + 70 });
+      pts.push({ u: umax + 40, v: vmin - 3000 }, { u: umin, v: vmin - 3000 }); poly(pts, C.sand);
+    }
+    // blocks: parks and buildings
+    if (z >= 14) {
+      for (let i = Math.floor(umin / BU); i <= Math.ceil(umax / BU); i++) for (let j = Math.floor(vmin / BV); j <= Math.ceil(vmax / BV); j++) {
+        const u0 = i * BU, v0 = j * BV; if (v0 < coast(u0) + 60) continue;
+        const h = hash(i, j), inset = 9;
+        if (h % 11 === 0) { poly([{ u: u0 + inset, v: v0 + inset }, { u: u0 + BU - inset, v: v0 + inset }, { u: u0 + BU - inset, v: v0 + BV - inset }, { u: u0 + inset, v: v0 + BV - inset }], C.park); continue; }
+        if (z >= 16) {
+          const n = 2 + (h % 3), w = (BU - 2 * inset) / n;
+          for (let k = 0; k < n; k++) {
+            const a = u0 + inset + k * w + 3, b = a + w - 6, d = 26 + ((h >> (k * 3)) % 12);
+            poly([{ u: a, v: v0 + inset }, { u: b, v: v0 + inset }, { u: b, v: v0 + inset + d }, { u: a, v: v0 + inset + d }], C.bldg);
+            poly([{ u: a, v: v0 + BV - inset - d }, { u: b, v: v0 + BV - inset - d }, { u: b, v: v0 + BV - inset }, { u: a, v: v0 + BV - inset }], C.bldg);
+          }
+        }
+      }
+    }
+    // Yarkon park + river
+    if (umax > PARK[0] && umin < PARK[1]) {
+      poly([{ u: PARK[0], v: vmin }, { u: PARK[1], v: vmin }, { u: PARK[1], v: vmax }, { u: PARK[0], v: vmax }], C.park);
+      ctx.beginPath(); for (let v = vmin; v <= vmax; v += 20) { const q = uv2xy(2075 + 45 * Math.sin(v / 210), v); v === vmin ? ctx.moveTo(q.x, q.y) : ctx.lineTo(q.x, q.y); }
+      ctx.strokeStyle = C.sea; ctx.lineWidth = Math.max(22, 3 * mpp); ctx.stroke();
+    }
+    // streets
+    ctx.lineCap = 'butt';
+    const drawStreets = (main) => {
+      const every = main ? 4 : 1;
+      ctx.beginPath();
+      for (let i = Math.floor(umin / BU); i <= Math.ceil(umax / BU); i++) {
+        if (main !== (mod(i, 4) === 0) || i % every) continue;
+        const u = i * BU; if (u > PARK[0] && u < PARK[1]) continue;
+        line({ u, v: Math.max(vmin, coast(u) + 60) }, { u, v: vmax });
+      }
+      for (let j = Math.floor(vmin / BV); j <= Math.ceil(vmax / BV); j++) {
+        if (main !== (mod(j, 4) === 1)) continue;
+        const v = j * BV; if (v < coast(0) + 40) continue;
+        if (main) line({ u: umin, v }, { u: umax, v });
+        else { if (umin < PARK[0]) line({ u: umin, v }, { u: Math.min(umax, PARK[0]), v }); if (umax > PARK[1]) line({ u: Math.max(umin, PARK[1]), v }, { u: umax, v }); }
+      }
+      ctx.strokeStyle = main ? C.main : C.street;
+      ctx.lineWidth = main ? Math.max(15, 3 * mpp) : Math.max(7, 1.3 * mpp);
+      ctx.stroke();
+    };
+    if (z >= 14) drawStreets(false);
+    drawStreets(true);
+    // sea on top
+    if (vmin < coast(umin) + 80 || vmin < coast(umax) + 80) {
+      const pts = []; for (let u = umin; u <= umax + 40; u += 40) pts.push({ u, v: coast(u) });
+      pts.push({ u: umax + 40, v: vmin - 3000 }, { u: umin, v: vmin - 3000 }); poly(pts, C.sea);
+    }
+    return t;
+  }
+});
+
+const dark = () => { const t = document.documentElement.dataset.theme; return t ? t === 'dark' : matchMedia('(prefers-color-scheme: dark)').matches; };
+let baseLayer = null, useProc = false;
+function setBase() {
+  if (baseLayer) map.removeLayer(baseLayer);
+  if (useProc) { baseLayer = new ProcLayer({ attribution: 'מפת הדמיה' }); }
+  else {
+    let loads = 0, errs = 0;
+    baseLayer = L.tileLayer(`https://{s}.basemaps.cartocdn.com/rastertiles/${dark() ? 'dark_all' : 'voyager'}/{z}/{x}/{y}{r}.png`, { subdomains: 'abcd', maxZoom: 19, attribution: '© OpenStreetMap © CARTO' });
+    baseLayer.on('tileload', () => loads++);
+    baseLayer.on('tileerror', () => { if (++errs >= 2 && !loads && !useProc) { useProc = true; setBase(); } });
+    setTimeout(() => { if (!loads && !useProc) { useProc = true; setBase(); } }, 3500);
+  }
+  baseLayer.addTo(map);
+}
+setBase();
+const onTheme = () => setBase();
+matchMedia('(prefers-color-scheme: dark)').addEventListener?.('change', onTheme);
+new MutationObserver(onTheme).observe(document.documentElement, { attributes: true, attributeFilter: ['data-theme'] });
+
+document.getElementById('zin').onclick = () => map.zoomIn();
+document.getElementById('zout').onclick = () => map.zoomOut();
+document.getElementById('recenter').onclick = () => recenter();
+
+const desk = () => innerWidth >= 860;
+function pads() {
+  const r = sheet.getBoundingClientRect(), m = mapEl.getBoundingClientRect();
+  return desk() ? { paddingTopLeft: [50, 90], paddingBottomRight: [r.width + 60, 50] } : { paddingTopLeft: [40, 100], paddingBottomRight: [40, m.bottom - r.top + 40] };
+}
+function visCenter() {
+  const r = sheet.getBoundingClientRect(), m = mapEl.getBoundingClientRect();
+  return desk() ? L.point((m.width - r.width - 32) / 2, m.height / 2 + 20) : L.point(m.width / 2, Math.max(120, (r.top - m.top) / 2 + 40));
+}
+function placeAt(ll, zoom) {
+  map.setView(ll, zoom ?? map.getZoom(), { animate: false });
+  const c = map.getSize().divideBy(2), v = visCenter();
+  map.panBy([c.x - v.x, c.y - v.y], { animate: false });
+}
+function fit(lls, maxZoom = 16) { map.fitBounds(L.latLngBounds(lls), { ...pads(), maxZoom, animate: true }); }
+function positionPin() { const v = visCenter(); pinEl.style.left = v.x + 'px'; pinEl.style.top = v.y + 'px'; }
+new ResizeObserver(() => { if (!pinEl.hidden) positionPin(); document.getElementById('app').style.setProperty('--sheet-h', desk() ? '0px' : sheet.offsetHeight + 'px'); }).observe(sheet);
+addEventListener('resize', () => { if (!pinEl.hidden) positionPin(); });
+
+const icon = (html, size = 28, cls = 'mk') => L.divIcon({ className: cls, html, iconSize: [size, size], iconAnchor: [size / 2, size / 2] });
+const pinIcon = (red) => L.divIcon({ className: 'mk', html: `<div class="pt${red ? ' red' : ''}"><i></i></div>`, iconSize: [34, 34], iconAnchor: [17, 41] });
+
+/* ================= nurses ================= */
+const nurses = NURSE_DATA.map((d, id) => {
+  const [name, f, rating, visits, years, veh, plate, langs, spec] = d;
+  const pos = { u: rnd(-1100, 1300), v: rnd(-500, 900) };
+  const n = { id, c: PAL[id % PAL.length], name, f, rating, visits, years, veh, plate, langs, spec, pos, mode: 'wander', speed: rnd(7, 11), path: null };
+  n.marker = L.marker(uv2ll(pos), { icon: icon(`<div class="nm" style="--c:${n.c}">${initials(name)}</div>`), keyboard: false }).addTo(map);
+  newWander(n);
+  return n;
+});
+function newWander(n) { n.path = mkPath(route(n.pos, clampLand({ u: n.pos.u + rnd(-700, 700), v: n.pos.v + rnd(-600, 600) }))); n.mode = 'wander'; }
+const nEl = n => n.marker.getElement()?.firstElementChild;
+function nClass(n, cls, label) {
+  const el = nEl(n); if (!el) return;
+  el.className = 'nm' + (cls ? ' ' + cls : '');
+  el.innerHTML = initials(n.name) + (label ? `<span class="tagl">${label}</span>` : '');
+}
+const available = () => nurses.filter(n => n.mode === 'wander');
+const girl = (n, f, m) => n.f ? f : m;
+
+/* ================= loop ================= */
+let last = performance.now();
+function tick(now) {
+  const dt = Math.min(0.1, (now - last) / 1000); last = now;
+  for (const n of nurses) {
+    if (n.mode === 'wander' || n.mode === 'enroute') {
+      n.path.d += n.speed * dt;
+      n.pos = at(n.path, n.path.d);
+      n.marker.setLatLng(uv2ll(n.pos));
+      if (n.path.d >= n.path.total) { if (n.mode === 'wander') newWander(n); else { n.mode = 'hold'; n.onArrive?.(); } }
+    }
+  }
+  if (me.mode === 'enroute') {
+    me.path.d += me.speed * dt; me.pos = at(me.path, me.path.d); me.marker.setLatLng(uv2ll(me.pos));
+    if (me.path.d >= me.path.total) { me.mode = 'hold'; me.onArrive?.(); }
+  }
+  requestAnimationFrame(tick);
+}
+requestAnimationFrame(tick);
+
+/* ================= helpers ================= */
+let timers = [];
+const later = (fn, ms) => timers.push(setTimeout(fn, ms));
+const every = (fn, ms) => timers.push(setInterval(fn, ms));
+const clearTimers = () => { timers.forEach(t => { clearTimeout(t); clearInterval(t); }); timers = []; };
+const esc = s => s.replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
+const etaMin = m => Math.max(1, Math.ceil(m / 3.2 / 60));
+const clock = mins => { const d = new Date(Date.now() + mins * 60000); return d.toLocaleTimeString('he-IL', { hour: '2-digit', minute: '2-digit' }); };
+const fmtM = m => m >= 1000 ? (m / 1000).toFixed(1) + ' ק״מ' : Math.round(m / 10) * 10 + ' מ׳';
+let toastT;
+function toast(msg) { const t = document.getElementById('toast'); t.textContent = msg; t.classList.add('show'); clearTimeout(toastT); toastT = setTimeout(() => t.classList.remove('show'), 2800); }
+let routeLine = null;
+function drawRoute(path) {
+  if (routeLine) map.removeLayer(routeLine);
+  routeLine = L.polyline(path.pts.map(uv2ll), { color: css('--brand'), weight: 5, opacity: .85, lineCap: 'round', lineJoin: 'round', dashArray: '1 9' }).addTo(map);
+}
+function clearRoute() { if (routeLine) { map.removeLayer(routeLine); routeLine = null; } }
+
+/* ================= PATIENT FLOW ================= */
+let MODE = 'patient';
+const P = { step: 'home', svc: null, loc: { u: 120, v: 180 }, when: 'now', fund: 'maccabi', notes: '', reqs: [], nurse: null, chat: [], rating: 5, tip: 10, prog: 0, cancelAsk: false, chatOpen: false };
+const patientMarker = L.marker([0, 0], { icon: pinIcon(false), keyboard: false });
+const svcById = id => SERVICES.find(s => s.id === id);
+const total = () => P.svc.price + (P.when === 'now' ? 30 : 0);
+
+function pinMode(on) {
+  pinEl.hidden = !on;
+  if (on) { map.removeLayer(patientMarker); positionPin(); }
+}
+map.on('movestart', () => pinEl.classList.add('lift'));
+map.on('moveend', () => {
+  pinEl.classList.remove('lift');
+  if (MODE !== 'patient' || pinEl.hidden) return;
+  const ll = map.containerPointToLatLng(visCenter());
+  const p = ll2uv(ll); p.v = Math.max(p.v, coast(p.u) + 90);
+  P.loc = p;
+  document.querySelectorAll('.addr-text').forEach(e => e.textContent = address(p) + ', תל אביב');
+});
+map.on('dragstart', () => { if (MODE === 'patient' && !pinEl.hidden) document.getElementById('pinLbl').textContent = 'שחרור לקביעת כתובת'; });
+map.on('dragend', () => document.getElementById('pinLbl').textContent = 'הכתובת לביקור');
+
+function addrBlock(hint) {
+  return `<div class="addr"><span class="dot">${ico('pin', 18)}</span><div class="grow"><b class="addr-text">${address(P.loc)}, תל אביב</b><span>${hint}</span></div></div>`;
+}
+function nearestEta() { const a = available(); if (!a.length) return '–'; return etaMin(Math.min(...a.map(n => dist(n.pos, P.loc) * 1.3))); }
+
+const VIEW = {
+  home() {
+    const h = new Date().getHours(), hi = h < 12 ? 'בוקר טוב' : h < 17 ? 'צהריים טובים' : h < 21 ? 'ערב טוב' : 'לילה טוב';
+    return `<div class="stack">
+      <div class="greet"><span class="eyebrow">${hi}</span><h1 class="h1">איזה טיפול צריך היום?</h1></div>
+      <div class="trust"><span style="--c:var(--ok)">${ico('shield', 14, 2.4)} אחיות מוסמכות</span><span>${ico('clock', 14, 2.4)} מגיעות תוך דקות</span><span style="--c:var(--amber)">${ico('star', 14)} 4.9 דירוג ממוצע</span></div>
+      ${addrBlock('גררו את המפה כדי לדייק את הכתובת')}
+      <div class="svc-grid">${SERVICES.map(s => `<button class="svc" style="--c:${s.c}" data-act="svc" data-v="${s.id}">
+        <span class="ic" style="--c:${s.c}">${ico(s.icon, 24)}</span><b>${s.name}</b>
+        <span class="meta num"><span class="price">₪${s.price}</span><span>${s.mins} דק׳</span></span></button>`).join('')}</div>
+      <div class="live" id="liveLine"><i></i><span><b class="num" id="availN">${available().length}</b> אחיות זמינות לידך · הקרובה במרחק <b class="num" id="nearN">${nearestEta()}</b> דק׳</span></div>
+    </div>`;
+  },
+  details() {
+    const s = P.svc, fund = FUNDS.find(f => f[0] === P.fund), refund = P.fund === 'private' ? 0 : Math.round(s.price * .4);
+    return `<div class="stack">
+      <div class="row"><button class="back" data-act="back" aria-label="חזרה">${ico('back', 18)}</button><span class="eyebrow">חזרה לטיפולים</span></div>
+      <div class="row" style="align-items:flex-start;gap:14px"><span class="ic lg" style="--c:${s.c}">${ico(s.icon, 30)}</span>
+        <div class="grow"><h1 class="h1">${s.name}</h1><div class="muted small">${s.desc}</div></div></div>
+      <ul class="incl">${s.incl.map(i => `<li>${ico('check', 16, 2.6)}<span>${i}</span></li>`).join('')}</ul>
+      ${addrBlock('אפשר להזיז את המפה כדי לשנות')}
+      <div><div class="eyebrow">מתי</div><div class="chips" style="margin-top:6px">${WHEN.map(w => `<button class="chip" data-act="when" data-v="${w[0]}" aria-pressed="${P.when === w[0]}">${w[1]}<small>${w[2]}</small></button>`).join('')}</div></div>
+      <div><div class="eyebrow">קופת חולים</div><div class="chips" style="margin-top:6px">${FUNDS.map(f => `<button class="chip" data-act="fund" data-v="${f[0]}" aria-pressed="${P.fund === f[0]}">${f[1]}</button>`).join('')}</div></div>
+      <div><label class="eyebrow" for="notes">הערות לאחות</label>
+        <textarea id="notes" style="margin-top:6px" placeholder="לדוגמה: קוד לבניין 1470, קומה 3. יש הפניה מהרופא.">${esc(P.notes)}</textarea></div>
+      <div class="sum num">
+        <div><span>${s.short}</span><span>₪${s.price}</span></div>
+        ${P.when === 'now' ? '<div><span>הגעה מיידית</span><span>₪30</span></div>' : ''}
+        <div class="tot"><span>סה״כ</span><span>₪${total()}</span></div>
+        ${refund ? `<div class="save small"><span>החזר שב״ן משוער (${fund[1]})</span><span>−₪${refund}</span></div>` : ''}
+      </div>
+      <button class="cta" data-act="order">הזמנת אחות · ₪${total()}</button>
+      <div class="demo-note">דמו: אין חיוב אמיתי ואין אחות אמיתית בדרך.</div>
+    </div>`;
+  },
+  searching() {
+    const st = { sent: ['נשלחה קריאה', ''], seen: ['צופה בקריאה', 'see'], no: ['דחתה', 'no'], ok: ['קיבלה', 'ok'], closed: ['הקריאה נסגרה', ''] };
+    return `<div class="stack">
+      <div class="radar" style="--c:${P.svc.c}"><span></span><span></span><span></span><span class="core">${ico(P.svc.icon, 22)}</span></div>
+      <div style="text-align:center"><h1 class="h1">מחפשים אחות פנויה</h1><div class="muted small">הקריאה נשלחה לאחיות הקרובות ביותר עם הכשרה ל${P.svc.short}</div></div>
+      <ul class="reqs">${P.reqs.map(r => `<li><span class="av" style="--c:${r.n.c}">${initials(r.n.name)}</span>
+        <div class="grow"><b>${r.n.name}</b><div class="muted small num">${fmtM(dist(r.n.pos, P.loc) * 1.3)} ממך${r.why ? ' · ' + r.why : ''}</div></div>
+        <span class="pill ${st[r.s][1]}">${st[r.s][0]}</span></li>`).join('')}</ul>
+      <button class="btn danger" data-act="cancelSearch">ביטול הקריאה</button>
+    </div>`;
+  },
+  matched() {
+    const n = P.nurse, rem = n.path.total - n.path.d, arrived = P.step === 'arrived';
+    const steps = ['הקריאה התקבלה', arrived ? `${n.name.split(' ')[0]} ${girl(n, 'הגיעה', 'הגיע')}` : 'בדרך אליך', 'טיפול', 'סיכום ותשלום'];
+    const idx = arrived ? 1 : 1;
+    if (P.chatOpen) return VIEW.chat();
+    return `<div class="stack">
+      ${arrived
+        ? `<div><div class="eyebrow">${girl(n, 'האחות', 'האח')} כאן</div><h1 class="h1">${n.name.split(' ')[0]} ${girl(n, 'מחכה', 'מחכה')} בכניסה</h1><div class="muted small">נא לפתוח את הדלת. ${girl(n, 'היא', 'הוא')} ${girl(n, 'תזדהה', 'יזדהה')} עם תעודת אחות מוסמכת.</div></div>`
+        : `<div class="row between"><div class="eta"><b class="num" id="etaN">${etaMin(rem)}</b><span>דק׳ עד ההגעה</span></div><span class="pill ok num" id="etaClock">הגעה ${clock(etaMin(rem))}</span></div>`}
+      <div class="ncard"><span class="av lg" style="--c:${n.c}">${initials(n.name)}</span>
+        <div class="grow"><div class="name">${n.name}</div>
+          <div class="small muted"><span class="star">★</span> <b class="num">${n.rating.toFixed(2)}</b> · <span class="num">${n.visits.toLocaleString('he-IL')}</span> ביקורים · ${n.years} שנות ותק</div>
+          <div class="small" style="margin-top:4px">${n.veh}${n.plate ? ` <span class="plate">${n.plate}</span>` : ''}</div></div></div>
+      <div class="tags"><span class="tag v">${ico('shield', 12, 2.4)} ${girl(n, 'אחות מוסמכת', 'אח מוסמך')} · רישיון ${10000 + n.id * 3917}</span><span class="tag">מומחיות: ${n.spec}</span><span class="tag">${n.langs}</span></div>
+      <div class="btns"><button class="btn" data-act="chat">${ico('chat', 18)} צ׳אט${P.chat.filter(m => m.who === 'them').length ? ' <span class="pill ok num">' + P.chat.filter(m => m.who === 'them').length + '</span>' : ''}</button><button class="btn" data-act="call">${ico('phone', 18)} שיחה</button></div>
+      <ul class="tl">${steps.map((s, i) => `<li class="${i < idx ? 'done' : i === idx ? 'now' : ''}"><i></i>${s}</li>`).join('')}</ul>
+      ${arrived ? `<button class="cta" data-act="opened">פתחתי את הדלת</button>` : ''}
+      ${P.cancelAsk
+        ? `<div class="alert bad">ביטול אחרי שהאחות יצאה לדרך כרוך בדמי ביטול של ₪25.</div><div class="btns"><button class="btn danger" data-act="cancelYes">כן, לבטל</button><button class="btn" data-act="cancelNo">השארת ההזמנה</button></div>`
+        : `<button class="btn danger" data-act="cancelRide" style="flex:none">ביטול הביקור</button>`}
+    </div>`;
+  },
+  chat() {
+    const n = P.nurse;
+    return `<div class="stack">
+      <div class="row"><button class="back" data-act="closeChat" aria-label="חזרה">${ico('back', 18)}</button><span class="av" style="--c:${n.c}">${initials(n.name)}</span><div class="grow"><b>${n.name}</b><div class="muted small">ההודעות עוברות דרך האפליקציה</div></div></div>
+      <div class="chatlog" id="chatlog"></div>
+      <div class="chips">${['הקוד לבניין 1470', 'קומה 3, דירה 7', 'יש חניה בחוץ?', 'עוד כמה זמן?', 'יש כלב בבית'].map(q => `<button class="chip" data-act="quick" data-v="${q}">${q}</button>`).join('')}</div>
+      <form class="chatform" id="chatform"><input id="chatin" placeholder="כתבו הודעה…" autocomplete="off"><button aria-label="שליחה">${ico('send', 18)}</button></form>
+    </div>`;
+  },
+  treating() {
+    const s = P.svc, done = P.prog;
+    return `<div class="stack">
+      <div><div class="eyebrow">בטיפול · ${s.short}</div><h1 class="h1">${P.nurse.name.split(' ')[0]} ${girl(P.nurse, 'מטפלת', 'מטפל')} בך</h1></div>
+      <div class="bar"><i style="width:${Math.round(done / s.steps.length * 100)}%"></i></div>
+      <ul class="checks">${s.steps.map((st, i) => `<li class="${i < done ? 'on' : i === done ? 'cur' : 'wait'}"><span class="box">${ico('check', 14, 3)}</span>${st}</li>`).join('')}</ul>
+      <div class="muted small">בדמו הטיפול מקוצר לכמה שניות. במציאות: כ-${s.mins} דקות.</div>
+    </div>`;
+  },
+  done() {
+    const s = P.svc, n = P.nurse, refund = P.fund === 'private' ? 0 : Math.round(s.price * .4);
+    return `<div class="stack">
+      <div style="text-align:center"><div class="done-badge">${ico('check', 32, 3)}</div><div class="eyebrow">הטיפול הסתיים</div><h1 class="h1">איך היה הביקור עם ${n.name.split(' ')[0]}?</h1></div>
+      <div class="stars">${[1, 2, 3, 4, 5].map(i => `<button data-act="star" data-v="${i}" class="${i <= P.rating ? 'on' : ''}" aria-label="${i} כוכבים">${ico('star', 34)}</button>`).join('')}</div>
+      <div><div class="eyebrow">טיפ ${girl(n, 'לאחות', 'לאח')}</div><div class="chips" style="margin-top:6px">${[0, 10, 20, 30].map(t => `<button class="chip num" data-act="tip" data-v="${t}" aria-pressed="${P.tip === t}">${t ? '₪' + t : 'בלי'}</button>`).join('')}</div></div>
+      <div class="receipt num"><div class="eyebrow"><span>פירוט חיוב</span><span>${new Date().toLocaleDateString('he-IL')}</span></div>
+        <div><span>${s.name}</span><span>₪${s.price}</span></div>
+        ${P.when === 'now' ? '<div><span>הגעה מיידית</span><span>₪30</span></div>' : ''}
+        ${P.tip ? `<div><span>טיפ</span><span>₪${P.tip}</span></div>` : ''}
+        <div style="font-weight:700"><span>חויב בכרטיס •••• 4417</span><span>₪${total() + P.tip}</span></div>
+        ${refund ? `<div class="muted small"><span>הוגשה בקשת החזר לשב״ן</span><span>₪${refund}</span></div>` : ''}
+        <div class="muted small"><span>קבלה</span><span>${P.invoice}</span></div>
+      </div>
+      ${s.id === 'blood' ? '<div class="muted small">הדגימות בדרך למעבדה. התוצאות יופיעו באפליקציית הקופה תוך 24–48 שעות.</div>' : ''}
+      <button class="cta" data-act="finish">שליחת דירוג</button>
+    </div>`;
+  },
+};
+VIEW.arrived = VIEW.matched;
+
+function render() {
+  if (MODE === 'nurse') return renderNurse();
+  sheet.innerHTML = VIEW[P.step]();
+  if (P.chatOpen && document.getElementById('chatlog')) { renderChat(); }
+}
+
+function goHome() {
+  clearTimers(); clearRoute();
+  P.step = 'home'; P.svc = null; P.nurse = null; P.reqs = []; P.chat = []; P.cancelAsk = false; P.chatOpen = false; P.rating = 5; P.tip = 10;
+  for (const n of nurses) { if (n.mode !== 'wander') newWander(n); nClass(n, ''); }
+  render(); pinMode(true); placeAt(uv2ll(P.loc), 15.5);
+  every(() => { const a = document.getElementById('availN'), b = document.getElementById('nearN'); if (a) { a.textContent = available().length; b.textContent = nearestEta(); } }, 1500);
+}
+
+const ACT = {
+  svc(id) { P.svc = svcById(id); P.step = 'details'; render(); sheet.scrollTop = 0; },
+  back() { P.step = 'home'; render(); },
+  when(v) { P.when = v; render(); },
+  fund(v) { P.fund = v; render(); },
+  order() {
+    pinMode(false); patientMarker.setLatLng(uv2ll(P.loc)).addTo(map);
+    if (P.when !== 'now') toast('בדמו מדלגים ישר למועד הביקור');
+    startSearch();
+  },
+  cancelSearch() { toast('הקריאה בוטלה'); goHome(); },
+  chat() { P.chatOpen = true; render(); },
+  closeChat() { P.chatOpen = false; render(); },
+  call() { toast('שיחה מוסווית דרך המוקד: 03-555-0142 (דמו)'); },
+  cancelRide() { P.cancelAsk = true; render(); },
+  cancelNo() { P.cancelAsk = false; render(); },
+  cancelYes() { toast('הביקור בוטל. חויבו דמי ביטול ₪25'); goHome(); },
+  opened() { startTreatment(); },
+  star(v) { P.rating = +v; render(); },
+  tip(v) { P.tip = +v; render(); },
+  finish() { toast(`תודה! הדירוג נשלח ל${P.nurse.name.split(' ')[0]}`); goHome(); },
+  quick(v) { sendMsg(v); },
+  // nurse mode
+  online() { N.online = !N.online; if (N.online) queueRequest(2500); else { clearTimers(); N.req = null; N.step = 'idle'; } renderNurse(); },
+  accept() { acceptReq(); },
+  decline() { declineReq('הקריאה הועברה לאחות אחרת'); },
+  nArrived() { N.step = 'onsite'; renderNurse(); },
+  nStart() { N.step = 'treating'; N.checks = []; renderNurse(); },
+  nCheck(i) { i = +i; N.checks.includes(i) ? N.checks.splice(N.checks.indexOf(i), 1) : N.checks.push(i); renderNurse(); },
+  nFinish() { finishNurseVisit(); },
+  nNext() { N.step = 'idle'; N.req = null; clearRoute(); map.removeLayer(N.pm); renderNurse(); queueRequest(4000); fit([uv2ll(me.pos)], 15.5); },
+  nChat() { toast(`נשלחה הודעה ל${N.req.p[0].split(' ')[0]}: "אני בדרך, אגיע בעוד כמה דקות"`); },
+};
+sheet.addEventListener('click', e => { const b = e.target.closest('[data-act]'); if (!b) return; ACT[b.dataset.act]?.(b.dataset.v, b); });
+sheet.addEventListener('input', e => { if (e.target.id === 'notes') P.notes = e.target.value; });
+sheet.addEventListener('submit', e => { if (e.target.id === 'chatform') { e.preventDefault(); const i = document.getElementById('chatin'); if (i.value.trim()) sendMsg(i.value.trim()); i.value = ''; } });
+
+function startSearch() {
+  P.step = 'searching';
+  const cands = available().sort((a, b) => dist(a.pos, P.loc) - dist(b.pos, P.loc)).slice(0, 3);
+  P.reqs = cands.map(n => ({ n, s: 'sent', why: '' }));
+  for (const n of nurses) { if (cands.includes(n)) { n.mode = 'hold'; nClass(n, 'req'); } else nClass(n, 'dim'); }
+  render();
+  fit([uv2ll(P.loc), ...cands.map(n => uv2ll(n.pos))], 16);
+  const set = (k, s, why = '') => { const r = P.reqs[k]; if (!r) return; r.s = s; r.why = why; if (s === 'no') nClass(r.n, 'no'); render(); };
+  later(() => set(1, 'seen'), 1100);
+  later(() => set(0, 'seen'), 1600);
+  later(() => set(0, 'no', 'באמצע טיפול אחר'), 2700);
+  later(() => set(2, 'seen'), 3000);
+  later(() => {
+    const win = P.reqs[1] || P.reqs[0];
+    P.reqs.forEach(r => { if (r !== win && r.s !== 'no') r.s = 'closed'; });
+    win.s = 'ok'; render();
+    later(() => matched(win.n), 900);
+  }, 4800);
+}
+
+function matched(n) {
+  P.nurse = n; P.step = 'matched';
+  for (const o of nurses) { if (o !== n) { if (o.mode === 'hold') newWander(o); nClass(o, 'dim'); } }
+  n.path = mkPath(route(n.pos, P.loc)); n.speed = Math.max(n.path.total / 24, 12); n.mode = 'enroute';
+  n.onArrive = arrived;
+  drawRoute(n.path);
+  nClass(n, 'assigned', `${etaMin(n.path.total)} דק׳`);
+  render();
+  fit([uv2ll(P.loc), uv2ll(n.pos)], 16.5);
+  every(() => {
+    if (n.mode !== 'enroute') return;
+    const rem = n.path.total - n.path.d, m = etaMin(rem);
+    const e = document.getElementById('etaN'), c = document.getElementById('etaClock');
+    if (e) { e.textContent = m; c.textContent = 'הגעה ' + clock(m); }
+    const tl = nEl(n)?.querySelector('.tagl'); if (tl) tl.textContent = m + ' דק׳';
+    // keep the remaining route trimmed
+    if (routeLine) routeLine.setLatLngs([uv2ll(n.pos), ...n.path.pts.slice(at(n.path, n.path.d).i).map(uv2ll)]);
+  }, 400);
+  later(() => pushThem(`היי, כאן ${n.name.split(' ')[0]} ${girl(n, 'האחות', 'האח')}. ${girl(n, 'יצאתי', 'יצאתי')} אלייך ואגיע בעוד כ-${etaMin(n.path.total)} דקות. יש קוד לבניין?`), 2200);
+}
+
+function arrived() {
+  const n = P.nurse; P.step = 'arrived'; P.cancelAsk = false;
+  clearRoute();
+  n.pos = { ...P.loc }; n.marker.setLatLng(uv2ll(P.loc));
+  nClass(n, 'assigned', girl(n, 'הגיעה', 'הגיע'));
+  render(); toast(`${n.name.split(' ')[0]} ${girl(n, 'הגיעה', 'הגיע')}!`);
+  later(() => { if (P.step === 'arrived') pushThem('אני למטה בכניסה.'); }, 1500);
+}
+
+function startTreatment() {
+  P.step = 'treating'; P.chatOpen = false; P.prog = 0; render();
+  nClass(P.nurse, 'assigned', 'בטיפול');
+  const step = () => { P.prog++; render(); if (P.prog < P.svc.steps.length) later(step, 2200); else later(() => { P.invoice = 'INV-' + new Date().getFullYear() + '-' + Math.floor(rnd(10000, 99999)); P.step = 'done'; render(); nClass(P.nurse, 'assigned', girl(P.nurse, 'סיימה', 'סיים')); }, 1200); };
+  later(step, 1800);
+}
+
+/* chat */
+function renderChat() {
+  const log = document.getElementById('chatlog'); if (!log) return;
+  log.innerHTML = P.chat.map(m => `<div class="msg ${m.who}">${esc(m.t)}</div>`).join('') + (P.typing ? `<div class="msg them typing">${P.nurse.name.split(' ')[0]} ${girl(P.nurse, 'מקלידה', 'מקליד')}…</div>` : '');
+  log.scrollTop = log.scrollHeight;
+}
+function pushThem(t) { P.chat.push({ who: 'them', t }); P.typing = false; if (P.chatOpen) renderChat(); else { if (P.step === 'matched' || P.step === 'arrived') render(); toast(`${P.nurse.name.split(' ')[0]}: ${t}`); } }
+function sendMsg(t) {
+  const n = P.nurse; P.chat.push({ who: 'me', t }); renderChat();
+  let r = 'קיבלתי, תודה!';
+  if (/קוד|אינטרקום|דלת/.test(t)) r = 'מעולה, רשמתי את הקוד.';
+  else if (/קומה|דירה/.test(t)) r = 'סבבה, אעלה ישר.';
+  else if (/חני/.test(t)) r = /קטנוע|אופניים/.test(n.veh) ? `אני על ${n.veh === 'קטנוע' ? 'קטנוע' : 'אופניים'}, חניה לא בעיה.` : 'אחפש בכחול-לבן, תודה!';
+  else if (/מתי|זמן|עוד/.test(t)) r = n.mode === 'enroute' ? `בערך ${etaMin(n.path.total - n.path.d)} דקות, אני כבר ${girl(n, 'קרובה', 'קרוב')}.` : 'אני כבר כאן, למטה.';
+  else if (/כלב|חתול/.test(t)) r = `אין בעיה, אני ${girl(n, 'רגילה', 'רגיל')} לחיות.`;
+  else if (/הפני|מרשם/.test(t)) r = 'מצוין, תכינו אותה ליד. אני אסרוק אותה במקום.';
+  later(() => { P.typing = true; renderChat(); }, 600);
+  later(() => pushThem(r), 1900);
+}
+
+/* ================= NURSE MODE ================= */
+const me = { pos: { u: -300, v: 350 }, mode: 'hold', speed: 14, path: null };
+me.marker = L.marker(uv2ll(me.pos), { icon: icon(`<div class="me">${ico('cross', 14, 3.4)}</div>`, 30), keyboard: false, zIndexOffset: 1000 });
+const N = { online: true, step: 'idle', earn: 486, visits: 3, rating: 4.97, req: null, checks: [], left: 15, pm: L.marker([0, 0], { icon: pinIcon(true), keyboard: false }) };
+
+function renderNurse() {
+  const r = N.req, nav = document.getElementById('navbar');
+  nav.hidden = N.step !== 'enroute';
+  const kpis = `<div class="kpis num"><div class="kpi" style="--c:var(--ok)"><b>₪${N.earn}</b><span>הכנסה היום</span></div><div class="kpi" style="--c:var(--brand)"><b>${N.visits}</b><span>ביקורים</span></div><div class="kpi" style="--c:var(--amber)"><b>${N.rating}</b><span>דירוג</span></div></div>`;
+  let h = '';
+  if (N.step === 'idle') {
+    h = `<div class="stack">
+      <div><div class="eyebrow">משמרת · נועה לוי, אחות מוסמכת</div><h1 class="h1">${N.online ? 'מחכה לקריאה הבאה' : 'את במצב לא זמין'}</h1></div>
+      <button class="switch" data-act="online" role="switch" aria-checked="${N.online}"><div><b>${N.online ? 'זמינה לקריאות' : 'לא זמינה'}</b><div class="muted small">${N.online ? 'קריאות באזור מרכז תל אביב' : 'הפעילי כדי לקבל קריאות'}</div></div><span class="tr"></span></button>
+      ${kpis}
+      ${N.online ? `<div class="live"><i></i><span>מחפשים קריאות בסביבה… <b class="num">${nurses.filter(n => n.mode === 'wander').length}</b> אחיות נוספות זמינות</span></div>` : ''}
+      <div class="muted small">בדמו קריאה חדשה נכנסת תוך כמה שניות.</div>
+    </div>`;
+  } else if (N.step === 'incoming') {
+    const s = r.svc, d = dist(me.pos, r.loc) * 1.3;
+    h = `<div class="stack"><div class="incoming">
+      <div class="row between"><div class="row"><span class="ic" style="--c:${s.c}">${ico(s.icon, 24)}</span><div><div class="eyebrow">קריאה חדשה</div><h1 class="h1">${s.name}</h1></div></div>
+        <div class="ring"><svg width="64" height="64"><circle cx="32" cy="32" r="27" fill="none" stroke="var(--line)" stroke-width="5"/><circle id="ringC" cx="32" cy="32" r="27" fill="none" stroke="var(--brand)" stroke-width="5" stroke-linecap="round" stroke-dasharray="169.6" stroke-dashoffset="${169.6 * (1 - N.left / 15)}"/></svg><b id="ringN" class="num">${Math.ceil(N.left)}</b></div></div>
+      <div class="row"><span class="av">${initials(r.p[0])}</span><div class="grow"><b>${r.p[0]}, ${r.p[1]}</b><div class="small muted">${r.p[2]}</div></div></div>
+      <div class="sum num"><div><span>כתובת</span><span>${address(r.loc)}</span></div><div><span>מרחק</span><span>${fmtM(d)} · ${etaMin(d)} דק׳</span></div><div><span>זמן טיפול משוער</span><span>${s.mins} דק׳</span></div><div class="tot" style="color:var(--ok)"><span>התשלום לך</span><span>₪${r.pay}</span></div></div>
+      <div class="btns"><button class="btn" data-act="decline">דחייה</button><button class="cta" style="flex:2" data-act="accept">קבלת הקריאה</button></div>
+    </div></div>`;
+  } else if (N.step === 'enroute' || N.step === 'onsite') {
+    const rem = me.path ? me.path.total - me.path.d : 0, arrivedNow = me.mode === 'hold';
+    h = `<div class="stack">
+      <div class="row between"><div><div class="eyebrow">${N.step === 'onsite' ? 'במקום' : 'בדרך למטופל/ת'}</div><h1 class="h1">${r.p[0]}</h1></div>${N.step === 'enroute' ? `<div class="eta"><b class="num" id="nEta">${etaMin(rem)}</b><span>דק׳</span></div>` : ''}</div>
+      <div class="sum"><div><span>טיפול</span><b>${r.svc.name}</b></div><div><span>כתובת</span><span>${address(r.loc)}, קומה ${1 + mod(Math.round(r.loc.u / 7), 6)}</span></div><div><span>רקע</span><span>${r.p[2]}</span></div></div>
+      ${r.note ? `<div class="alert">${r.note}</div>` : ''}
+      ${N.step === 'enroute'
+        ? `<div class="btns"><button class="btn" data-act="nChat">${ico('chat', 18)} הודעה למטופל</button></div><button class="cta" id="nArrBtn" data-act="nArrived" ${arrivedNow ? '' : 'disabled'}>הגעתי</button>`
+        : `<ul class="incl"><li>${ico('check', 16, 2.6)}<span>הזדהות עם תעודת אחות</span></li><li>${ico('check', 16, 2.6)}<span>היגיינת ידיים וכפפות</span></li><li>${ico('check', 16, 2.6)}<span>אימות זהות המטופל/ת</span></li></ul><button class="cta" data-act="nStart">התחלת טיפול</button>`}
+    </div>`;
+  } else if (N.step === 'treating') {
+    const s = r.svc, all = N.checks.length === s.steps.length;
+    h = `<div class="stack">
+      <div><div class="eyebrow">טיפול · ${r.p[0]}</div><h1 class="h1">${s.name}</h1></div>
+      <div class="bar"><i style="width:${Math.round(N.checks.length / s.steps.length * 100)}%"></i></div>
+      <div class="checks" role="group">${s.steps.map((st, i) => `<button data-act="nCheck" data-v="${i}" class="${N.checks.includes(i) ? 'on' : ''}" aria-pressed="${N.checks.includes(i)}"><span class="box">${ico('check', 14, 3)}</span>${st}</button>`).join('')}</div>
+      <button class="cta" data-act="nFinish" ${all ? '' : 'disabled'}>סיום טיפול ודיווח</button>
+    </div>`;
+  } else if (N.step === 'summary') {
+    h = `<div class="stack">
+      <div style="text-align:center"><div class="done-badge">${ico('check', 32, 3)}</div><div class="eyebrow">הביקור הושלם</div><h1 class="h1">+₪${r.pay + r.tip}</h1><div class="muted small num">₪${r.pay} תשלום${r.tip ? ` + ₪${r.tip} טיפ` : ''} · ${r.p[0]} ${'★'.repeat(5)}</div></div>
+      ${kpis}
+      <div class="muted small">הדיווח נשלח לרופא המטפל ${r.svc.id === 'blood' ? 'והדגימות נרשמו למעבדה' : 'ולתיק הרפואי'}.</div>
+      <button class="cta" data-act="nNext">חזרה לזמינות</button>
+    </div>`;
+  }
+  sheet.innerHTML = h;
+}
+
+function queueRequest(ms) {
+  later(() => {
+    if (MODE !== 'nurse' || !N.online || N.step !== 'idle') return;
+    const svc = pick(SERVICES), p = pick(PATIENTS);
+    let loc; do { loc = randLand(); } while (dist(loc, me.pos) < 500 || dist(loc, me.pos) > 1600);
+    N.req = { svc, p, loc, pay: Math.round(svc.price * .75), tip: pick([0, 10, 20, 20, 30]), note: pick(['', '', 'יש הפניה חתומה מרופא המשפחה', 'בן המשפחה יפתח את הדלת', 'בבקשה להתקשר לפני העלייה']) };
+    N.step = 'incoming'; N.left = 15;
+    N.pm.setLatLng(uv2ll(loc)).addTo(map);
+    fit([uv2ll(me.pos), uv2ll(loc)], 16);
+    renderNurse();
+    every(() => {
+      if (N.step !== 'incoming') return;
+      N.left -= .1;
+      const c = document.getElementById('ringC'), n = document.getElementById('ringN');
+      if (c) { c.setAttribute('stroke-dashoffset', 169.6 * (1 - Math.max(0, N.left) / 15)); n.textContent = Math.max(0, Math.ceil(N.left)); }
+      if (N.left <= 0) declineReq('לא נענתה בזמן, הקריאה הועברה הלאה');
+    }, 100);
+  }, ms);
+}
+function declineReq(msg) { clearTimers(); map.removeLayer(N.pm); N.req = null; N.step = 'idle'; toast(msg); renderNurse(); queueRequest(4500); }
+function acceptReq() {
+  clearTimers();
+  N.step = 'enroute';
+  me.path = mkPath(route(me.pos, N.req.loc)); me.speed = Math.max(me.path.total / 26, 12); me.mode = 'enroute';
+  me.onArrive = () => { toast('הגעת ליעד'); document.getElementById('navbar').hidden = true; const b = document.getElementById('nArrBtn'); if (b) b.disabled = false; };
+  drawRoute(me.path); renderNurse();
+  fit([uv2ll(me.pos), uv2ll(N.req.loc)], 16.5);
+  every(updateNav, 300); updateNav();
+}
+function updateNav() {
+  if (me.mode !== 'enroute') return;
+  const p = me.path, cur = at(p, p.d), i = cur.i, toNext = p.cum[i] - p.d, rem = p.total - p.d;
+  const e = document.getElementById('nEta'); if (e) e.textContent = etaMin(rem);
+  if (routeLine) routeLine.setLatLngs([uv2ll(me.pos), ...p.pts.slice(i).map(uv2ll)]);
+  const dEl = document.getElementById('navDist'), tEl = document.getElementById('navText'), aEl = document.getElementById('navArrow');
+  if (i >= p.pts.length - 1) { dEl.textContent = fmtM(rem); tEl.textContent = 'היעד בצד ימין'; aEl.innerHTML = ico('flag', 24); return; }
+  const a = uv2xy(p.pts[i - 1].u, p.pts[i - 1].v), b = uv2xy(p.pts[i].u, p.pts[i].v), c = uv2xy(p.pts[i + 1].u, p.pts[i + 1].v);
+  const cross = (b.x - a.x) * (c.y - b.y) - (b.y - a.y) * (c.x - b.x);
+  const nx = p.pts[i + 1], along = Math.abs(nx.u - p.pts[i].u) > Math.abs(nx.v - p.pts[i].v);
+  const street = along ? nsName(p.pts[i].v) : ewName(p.pts[i].u);
+  dEl.textContent = fmtM(toNext);
+  tEl.textContent = `${cross > 0 ? 'פני שמאלה' : 'פני ימינה'} לרחוב ${street}`;
+  aEl.innerHTML = ico(cross > 0 ? 'left' : 'right', 24);
+}
+function finishNurseVisit() {
+  const r = N.req; N.earn += r.pay + r.tip; N.visits++; N.step = 'summary';
+  renderNurse(); toast('הטיפול תועד ונשלח');
+}
+
+/* ================= mode switch ================= */
+function recenter() {
+  if (MODE === 'patient') {
+    if (P.step === 'home' || P.step === 'details') placeAt(uv2ll(P.loc), 15.5);
+    else if (P.nurse) fit([uv2ll(P.loc), uv2ll(P.nurse.pos)], 16.5);
+    else fit([uv2ll(P.loc), ...P.reqs.map(r => uv2ll(r.n.pos))]);
+  } else {
+    fit(N.req ? [uv2ll(me.pos), uv2ll(N.req.loc)] : [uv2ll(me.pos)], 16);
+  }
+}
+function setMode(m) {
+  if (m === MODE) return;
+  MODE = m; clearTimers(); clearRoute();
+  document.getElementById('modeP').setAttribute('aria-pressed', m === 'patient');
+  document.getElementById('modeN').setAttribute('aria-pressed', m === 'nurse');
+  document.getElementById('navbar').hidden = true;
+  if (m === 'nurse') {
+    map.removeLayer(patientMarker); pinMode(false);
+    for (const n of nurses) { if (n.mode !== 'wander') newWander(n); nClass(n, ''); }
+    // "me" is Noa: hide her wandering twin
+    map.removeLayer(nurses[0].marker); nurses[0].mode = 'off';
+    me.marker.setLatLng(uv2ll(me.pos)).addTo(map);
+    N.step = 'idle'; N.req = null; map.removeLayer(N.pm);
+    renderNurse(); placeAt(uv2ll(me.pos), 15.5);
+    if (N.online) queueRequest(2500);
+  } else {
+    me.mode = 'hold'; map.removeLayer(me.marker); map.removeLayer(N.pm);
+    nurses[0].marker.addTo(map); newWander(nurses[0]);
+    goHome();
+  }
+}
+document.getElementById('modeP').onclick = () => setMode('patient');
+document.getElementById('modeN').onclick = () => setMode('nurse');
+
+goHome();
+})();
+</script>
+
+</body></html>
